@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java this
+# key: th
+# binding: direct-keybinding
+# --
+this.$1 = $1;
+th$0

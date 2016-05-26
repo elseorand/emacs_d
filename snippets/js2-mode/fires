@@ -1,0 +1,12 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: fires
+# key: fires
+# binding: direct-keybinding
+# expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+var ${1:$$(upcase yas-text)}_s = {};
+$('.$1').each(function(){
+  var _this = $(this);
+  var _id = _this.attr('id');
+  $1_s[_id] = $('#'+_id);
+});

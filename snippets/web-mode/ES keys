@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ES keys
+# key: keys
+# --
+Object.keys($1)$0

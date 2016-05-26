@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Tuple
+# key: tp
+# binding: direct-keybinding
+# --
+Tuple${1:<>}${2:.tie($0)}

@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Stream
+# key: sm
+# binding: direct-keybinding
+# --
+.stream().$0

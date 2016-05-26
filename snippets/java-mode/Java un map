@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java un map
+# key: um
+# binding: direct-keybinding
+# --
+Collections.unmodifiableMap($0);

@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java finally
+# key: fy
+# binding: direct-keybinding
+# --
+finally{
+    $0;
+}

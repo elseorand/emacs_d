@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: SQL where
+# key: w
+# binding: direct-keybinding
+# --
+where $0

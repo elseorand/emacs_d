@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: SQL group by
+# key: go
+# binding: direct-keybinding
+# --
+$0
+group by $1
+order by $1

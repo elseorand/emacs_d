@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: lazy
+# key: lz
+# binding: direct-keybinding
+# --
+lazy $0

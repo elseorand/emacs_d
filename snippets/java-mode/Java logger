@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java logger
+# key: lg
+# binding: direct-keybinding
+# --
+logger().${1:`(yas-choose-value "info" "error" "debug")`($2);}$0

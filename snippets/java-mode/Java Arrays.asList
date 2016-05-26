@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Arrays.asList
+# key: asl
+# binding: direct-keybinding
+# --
+Arrays.asList($0)

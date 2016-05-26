@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java not equal
+# key: ne
+# binding: direct-keybinding
+# --
+$0 != 

@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: pluplu
+# key: pp
+# binding: direct-keybinding
+# --
++$0+

@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java methd
+# key: mt
+# binding: direct-keybinding
+# --
+${1:`(yas-choose-value "public" "" "private")`} $2($3){
+    $0;
+}

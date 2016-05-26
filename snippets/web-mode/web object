@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: web object
+# key: object
+# --
+{$0}

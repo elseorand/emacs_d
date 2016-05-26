@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: toggle false
+# key: true
+# --
+false

@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: EC style
+# key: sy
+# binding: direct-keybinding
+# --
+style="$0"

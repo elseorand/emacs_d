@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java un list
+# key: ul
+# binding: direct-keybinding
+# --
+Collections.unmodifiableList($0);

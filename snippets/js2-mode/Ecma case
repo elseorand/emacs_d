@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Ecma case
+# key: cc
+# binding: direct-keybinding
+# --
+case $0:
+break;

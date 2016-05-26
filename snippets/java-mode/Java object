@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java object
+# key: object
+# binding: direct-keybinding
+# --
+Objects.$1($0)

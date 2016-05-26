@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java computeIfPresent
+# key: cp
+# binding: direct-keybinding
+# --
+computeIfPresent(key, k -> $0)

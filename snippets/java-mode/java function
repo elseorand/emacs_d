@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: java function
+# key: function
+# binding: direct-keybinding
+# expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+$1 ${2:<${3:$$(upcase yas-text)}>} $4(${5:Function<$6>} $0$7

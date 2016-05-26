@@ -1,0 +1,16 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Public class
+# key: pc
+# binding: direct-keybinding
+# expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+public class `(getfilename)`{
+       ${1:$$(yas-choose-value '("private" "" "protected" "public"))}$2 $3$0;
+       ${4:$$(yas-choose-value '("private" "" "protected" "public"))} `(getfilename)`(final $2 $3){
+       this.$3 = $3;     
+       }
+
+       public static `(getfilename)` of(final $2 $3){
+       	      return new `(getfilename)`($3);
+	      }
+}

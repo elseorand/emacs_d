@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: jQuery each
+# key: je
+# binding: direct-keybinding
+# --
+`(delete-backward-char 1)`.each(${1:arr,}function(i, obj){
+$0
+});
