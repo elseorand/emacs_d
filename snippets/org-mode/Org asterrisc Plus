@@ -1,6 +1,0 @@
-# -*- mode: snippet; require-final-newline: nil -*-
-# name: Org asterrisc Plus
-# key: *
-# binding: direct-keybinding
-# --
-*$0*
