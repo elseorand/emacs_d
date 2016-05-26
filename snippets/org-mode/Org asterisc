@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Org asterisc
+# key: as
+# binding: direct-keybinding
+# --
+*$0

@@ -1,0 +1,9 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Org header
+# key: hd
+# binding: direct-keybinding
+# --
+#+TITLE: $0
+#+AUTHOR: $1
+#+LANGUAGE: ja
+#+OPTIONS: ^:{}
