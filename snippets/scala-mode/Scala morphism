@@ -3,4 +3,4 @@
 # key: morphism
 # binding: direct-keybinding
 # --
-$1 => $0`(delete-char 1)`
+=> $0`(delete-char 1)`

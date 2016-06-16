@@ -1265,7 +1265,7 @@
 (electric-operator-add-rules-for-mode
  'java-mode (cons "," ", ") (cons "=" " = ") (cons "==" " == ") (cons "->" " -> ") (cons "<" "<>") (cons ">" "> ") (cons ">(" ">()"))
 (electric-operator-add-rules-for-mode
- 'scala-mode (cons "=" " = ") (cons "==" " == ") (cons "=>" " => ") (cons "," ", ") (cons "=:=" " =:= ")
+ 'scala-mode (cons "=" " = ") (cons "<=" " <= ") (cons ">=" " >= ") (cons "==" " == ") (cons "=>" " => ") (cons "," ", ") (cons "=:=" " =:= ")
  (cons "<:<" " <:< ") (cons ">:>" " >:> ") (cons ">:" " >: ") (cons "<:" " <: ") (cons "->" " -> ")
 )
 (electric-operator-add-rules-for-mode
