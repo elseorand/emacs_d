@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: base map
+# key: mp
+# --
+map $0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: base and
+# key: and
+# --
+&& $0

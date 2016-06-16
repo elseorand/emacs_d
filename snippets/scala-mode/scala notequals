@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: scala notequals
+# key: notEquals
+# --
+!= $0

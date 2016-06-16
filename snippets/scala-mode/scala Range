@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: scala Range
+# key: range
+# --
+Range($0)
