@@ -1332,6 +1332,31 @@
 
 ;; C++ end
 
+;; slack start
+
+(el-get-bundle slack)
+(use-package slack
+  :commands (slack-start)
+  :init
+  (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
+  (setq slack-prefer-current-team t)
+  :config
+  (slack-register-team
+   :name "emacs-slack"
+   :default t
+   :client-id "50181883856.51621086513"
+   :client-secret "d7779c9b9e31fe18e7b797c2996dabe4"
+   :token " 	xoxp-50181883856-50181883888-51606980548-b4ee6d3090"
+   :subscribed-channels '(test-rename rrrrr))
+)
+
+(use-package alert
+  :commands (alert)
+  :init
+  (setq alert-default-style 'notifier))
+
+;; slack end
+
 ;; 行末の空白を削除
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
