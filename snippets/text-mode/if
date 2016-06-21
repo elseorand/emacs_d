@@ -3,6 +3,6 @@
 # key: if
 # binding: direct-keybinding
 # --
-if($1){
+if ($1){
 $2
 }else if$0
