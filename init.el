@@ -308,7 +308,7 @@
 ;; MELPAを追加
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 ;; Marmaladeを追加
-(add-to-list 'package-archives  '("marmalade" . "https://marmalade-repo.org/packages/"))
+;; (add-to-list 'package-archives  '("marmalade" . "https://marmalade-repo.org/packages/"))
 ;; 初期化
 (package-initialize)
 
@@ -397,27 +397,29 @@
 ;;
 ;; helm settings
 ;;
+(require 'helm-anything nil t)
+(require 'helm)
 
 (setq helm-buffer-max-length 100)
-(require 'helm-anything nil t)
+(helm-migemo-mode 1)
 ;; ;;; この前にmigemoの設定が必要
-(require 'helm-migemo)
-;;; この修正が必要
-(with-eval-after-load "helm-migemo"
-  (defun helm-compile-source--candidates-in-buffer (source)
-    (helm-aif (assoc 'candidates-in-buffer source)
-        (append source
-                `((candidates
-                   . ,(or (cdr it)
-                          (lambda ()
-                            ;; Do not use `source' because other plugins
-                            ;; (such as helm-migemo) may change it
-                            (helm-candidates-in-buffer (helm-get-current-source)))))
-                  (volatile) (match identity)))
-      source))
-  ;; [2015-09-06 Sun]helm-match-plugin -> helm-multi-match変更の煽りを受けて
-  (defalias 'helm-mp-3-get-patterns 'helm-mm-3-get-patterns)
-  (defalias 'helm-mp-3-search-base 'helm-mm-3-search-base))
+;; (require 'helm-migemo)
+;; ;;; この修正が必要
+;; (with-eval-after-load "helm-migemo"
+;;   (defun helm-compile-source--candidates-in-buffer (source)
+;;     (helm-aif (assoc 'candidates-in-buffer source)
+;;         (append source
+;;                 `((candidates
+;;                    . ,(or (cdr it)
+;;                           (lambda ()
+;;                             ;; Do not use `source' because other plugins
+;;                             ;; (such as helm-migemo) may change it
+;;                             (helm-candidates-in-buffer (helm-get-current-source)))))
+;;                   (volatile) (match identity)))
+;;       source))
+;;   ;; [2015-09-06 Sun]helm-match-plugin -> helm-multi-match変更の煽りを受けて
+;;   (defalias 'helm-mp-3-get-patterns 'helm-mm-3-get-patterns)
+;;   (defalias 'helm-mp-3-search-base 'helm-mm-3-search-base))
 
 (require 'helm-swoop)
 ;;; isearchからの連携を考えるとC-r/C-sにも割り当て推奨
@@ -454,9 +456,6 @@
 ;;; ace-isearch
 (global-ace-isearch-mode t)
 (setq ace-isearch-input-length 6)
-
-(require 'helm-anything nil t)
-(require 'helm)
 
 ;;; resumable helm/anything buffers
 (defvar helm-resume-goto-buffer-regexp
@@ -560,7 +559,7 @@
 ;; markdown-mode Settings End
 
 ;; Scala
-(require 'scala-mode2)
+(require 'scala-mode)
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
 (add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
 
@@ -927,9 +926,7 @@
  '(rainbow-delimiters-depth-6-face ((t (:foreground "#1BaF1F" :weight bold))))
  '(rainbow-delimiters-depth-7-face ((t (:foreground "#66bbff" :weight bold))))
  '(rainbow-delimiters-depth-8-face ((t (:foreground "#0C00CC" :weight bold))))
- '(rainbow-delimiters-depth-9-face ((t (:foreground "#8E00CC" :weight bold))))
-
-)
+ '(rainbow-delimiters-depth-9-face ((t (:foreground "#8E00CC" :weight bold)))))
 
 ;; making unmatched parens stand out more
 (set-face-attribute 'rainbow-delimiters-unmatched-face nil
@@ -1053,11 +1050,6 @@
 (require 'volatile-highlights)
 (volatile-highlights-mode t)
 
-;;;
-(require 'psvn)
-(setq svn-status-verbose nil)
-(setq svn-status-hide-unmodified t)
-
 ;;; emmet Setting Start
 (add-hook 'emmet-mode-hook
 	  (lambda()
@@ -1141,12 +1133,25 @@
 ;; java-mode で有効
 (add-hook 'java-mode-hook 'eclim-mode)
 (custom-set-variables
-  '(eclim-eclipse-dirs '("/home/elseorand/eclipses/eclipse4.5/"))
-  '(eclim-executable "/home/elseorand/eclipses/eclipse4.5/eclim")
-  '(eclimd-wait-for-process nil))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(column-number-mode t)
+ '(display-time-mode t)
+ '(eclim-eclipse-dirs (quote ("/home/elseorand/eclipses/eclipse4.5/")))
+ '(eclim-executable "/home/elseorand/eclipses/eclipse4.5/eclim")
+ '(eclimd-wait-for-process nil)
+ '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
+ '(package-selected-packages
+   (quote
+    (win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
+ '(rtags-use-helm t)
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
 
 ;; add the emacs-eclim source
-(require 'ac-emacs-eclim-source)
+(require 'ac-emacs-eclim)
 (ac-emacs-eclim-config)
 ;; エラー箇所にカーソルを当てるとエコーエリアに詳細を表示する
 (setq help-at-pt-display-when-idle t)
@@ -1328,7 +1333,7 @@
                 (local-set-key (kbd "M-@") 'rtags-find-references)
                 (local-set-key (kbd "M-,") 'rtags-location-stack-back)))))
 
-(custom-set-variables '(rtags-use-helm t))
+
 
 ;; C++ end
 
@@ -1371,15 +1376,6 @@
 (provide '.emacs)
 ;;; .emacs.el ends here
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(column-number-mode t)
- '(display-time-mode t)
- '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
- '(show-paren-mode t)
- '(tool-bar-mode nil))
+
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
