@@ -4,4 +4,4 @@
 # binding: direct-keybinding
 # expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
 # --
-Console println "$1$2".format($1)$0
+Console println "$1$2 : %s".format($1)$0
