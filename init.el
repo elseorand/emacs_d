@@ -173,7 +173,7 @@
 	      default-frame-alist))
 
 ;;; GC
-(setq gc-cons-threshold 5242880)
+(setq gc-cons-threshold (* 512 1024 1024))
 
 ;;; scroll-bar-mode
 (scroll-bar-mode -1)
@@ -196,6 +196,8 @@
 
 ;;; Screen Settings End
 
+;; japanese input 二重のnn で ん
+(setq quail-japanese-use-double-n t)
 
 ;; ;;; shell Settings Start
 
@@ -369,6 +371,11 @@
 ;;(global-set-key (kbd "C-M-p") (lambda() (interactive) (scroll-down 1)))
 
 ;; key-bind_s Settings End
+
+;; IME
+(require 'mozc)
+(set-language-environment "Japanese")
+(setq default-input-method "japanese-mozc")
 
 ;; migemo Settintg Start
 (require 'migemo)
@@ -564,21 +571,22 @@
 (add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
 
 (require 'ensime)
-;(defun my-ensime-sbt-do-compile(dir)
-;  (interactive "DInput Auto Compiling target dir : ")
-;  (message "dir : %s" dir )
-;  (start-process-shell-command "activator_compile" "activator" (concat "cd " dir " | activator.bat ~compile") ))
+(defun my-ensime-sbt-do-compile(dir)
+  (interactive "DInput Auto Compiling target dir : ")
+  (message "dir : %s" dir )
+  (start-process-shell-command "activator_compile" "activator" (concat "cd " dir " | activator.bat ~compile") ))
 
-;(defun my-ensime-sbt-do-test(dir)
-;  (interactive "DInput Auto Testing target dir : ")
-;  (message "dir : %s" dir )
-;  (start-process-shell-command "activator_test" "activator" (concat "cd " dir " | activator.bat test") ))
-;(defun my-ensime-scala-mode-hook ()
-;  (define-key ensime-mode-map (kbd "C-c C-b c") 'my-ensime-sbt-do-compile)
-;)
-;(add-hook 'ensime-scala-mode-hook 'my-ensime-scala-mode-hook)
-;(add-hook 'scala-mode-hook 'my-ensime-scala-mode-hook)
+(defun my-ensime-sbt-do-test(dir)
+  (interactive "DInput Auto Testing target dir : ")
+  (message "dir : %s" dir )
+  (start-process-shell-command "activator_test" "activator" (concat "cd " dir " | activator.bat test") ))
+(defun my-ensime-scala-mode-hook ()
+  (define-key ensime-mode-map (kbd "C-c C-b c") 'my-ensime-sbt-do-compile)
+)
+(add-hook 'ensime-scala-mode-hook 'my-ensime-scala-mode-hook)
+(add-hook 'scala-mode-hook 'my-ensime-scala-mode-hook)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(setq ensime-startup-snapshot-notification nil)
 
 
 ;; color-moccur
@@ -1145,7 +1153,7 @@
  '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
  '(package-selected-packages
    (quote
-    (win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
+    (mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
