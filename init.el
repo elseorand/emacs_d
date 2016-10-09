@@ -571,23 +571,63 @@
 (add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
 
 (require 'ensime)
-(defun my-ensime-sbt-do-compile(dir)
-  (interactive "DInput Auto Compiling target dir : ")
-  (message "dir : %s" dir )
-  (start-process-shell-command "activator_compile" "activator" (concat "cd " dir " | activator.bat ~compile") ))
-
-(defun my-ensime-sbt-do-test(dir)
-  (interactive "DInput Auto Testing target dir : ")
-  (message "dir : %s" dir )
-  (start-process-shell-command "activator_test" "activator" (concat "cd " dir " | activator.bat test") ))
-(defun my-ensime-scala-mode-hook ()
-  (define-key ensime-mode-map (kbd "C-c C-b c") 'my-ensime-sbt-do-compile)
-)
-(add-hook 'ensime-scala-mode-hook 'my-ensime-scala-mode-hook)
-(add-hook 'scala-mode-hook 'my-ensime-scala-mode-hook)
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 (setq ensime-startup-snapshot-notification nil)
+;; (defun my-ensime-sbt-do-compile(dir)
+;;   (interactive "DInput Auto Compiling target dir : ")
+;;   (message "dir : %s" dir )
+;;   (start-process-shell-command "activator_compile" "activator" (concat "cd " dir " | activator.bat ~compile") ))
 
+;; (defun my-ensime-sbt-do-test(dir)
+;;   (interactive "DInput Auto Testing target dir : ")
+;;   (message "dir : %s" dir )
+;;   (start-process-shell-command "activator_test" "activator" (concat "cd " dir " | activator.bat test") ))
+;; (defun my-ensime-scala-mode-hook ()
+;;   (define-key ensime-mode-map (kbd "C-c C-b c") 'my-ensime-sbt-do-compile)
+;; )
+
+(defun scala/enable-eldoc ()
+  "Show error message or type name at point by Eldoc."
+  (setq-local eldoc-documentation-function
+              #'(lambda ()
+                  (when (ensime-connected-p)
+                    (let ((err (ensime-print-errors-at-point)))
+                      (or (and err (not (string= err "")) err)
+                          (ensime-print-type-at-point))))))
+  (eldoc-mode +1))
+
+(defun scala/completing-dot-company ()
+  (cond (company-backend
+         (company-complete-selection)
+         (scala/completing-dot))
+        (t
+         (insert ".")
+         (company-complete))))
+
+(defun scala/completing-dot-ac ()
+  (insert ".")
+  (ac-trigger-key-command t))
+
+;; Interactive commands
+
+(defun scala/completing-dot ()
+  "Insert a period and show company completions."
+  (interactive "*")
+  (eval-and-compile (require 'ensime))
+  (eval-and-compile (require 's))
+  (when (s-matches? (rx (+ (not space)))
+                    (buffer-substring (line-beginning-position) (point)))
+    (delete-horizontal-space t))
+  (cond ((not (and (ensime-connected-p) ensime-completion-style))
+         (insert "."))
+        ((eq ensime-completion-style 'company)
+         (scala/completing-dot-company))
+        ((eq ensime-completion-style 'auto-complete)
+         (scala/completing-dot-ac))))
+
+;; Initialization
+(add-hook 'ensime-mode-hook #'scala/enable-eldoc)
+(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(add-hook 'scala-mode-hook 'flycheck-mode)
 
 ;; color-moccur
 ;;(when (require 'color-moccur nil t)
@@ -870,7 +910,9 @@
 	    (local-unset-key (kbd "M-p"))))
 
 ;; yasnippet
+(setq warning-suppress-types nil)
 (require 'yasnippet)
+(add-to-list 'warning-suppress-types '(yasnippet backquote-change))
 (setq yas-snippet-dirs
       '("~/.emacs.d/snippets"))
 (yas-global-mode 1)
@@ -1135,40 +1177,40 @@
 	(setq ad-return-value argument))
  ad-do-it))
 
-(require 'eclim)
-(require 'eclimd)
-(setq eclimd-default-workspace "~/workspace")
-;; java-mode で有効
-(add-hook 'java-mode-hook 'eclim-mode)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(column-number-mode t)
- '(display-time-mode t)
- '(eclim-eclipse-dirs (quote ("/home/elseorand/eclipses/eclipse4.5/")))
- '(eclim-executable "/home/elseorand/eclipses/eclipse4.5/eclim")
- '(eclimd-wait-for-process nil)
- '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
- '(package-selected-packages
-   (quote
-    (mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
- '(rtags-use-helm t)
- '(show-paren-mode t)
- '(tool-bar-mode nil))
+;; (require 'eclim)
+;; (require 'eclimd)
+;; (setq eclimd-default-workspace "~/workspace")
+;; ;; java-mode で有効
+;; (add-hook 'java-mode-hook 'eclim-mode)
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(column-number-mode t)
+;;  '(display-time-mode t)
+;;  '(eclim-eclipse-dirs (quote ("/home/elseorand/eclipses/eclipse4.5/")))
+;;  '(eclim-executable "/home/elseorand/eclipses/eclipse4.5/eclim")
+;;  '(eclimd-wait-for-process nil)
+;;  '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
+;;  '(package-selected-packages
+;;    (quote
+;;     (win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
+;;  '(rtags-use-helm t)
+;;  '(show-paren-mode t)
+;;  '(tool-bar-mode nil))
 
 ;; add the emacs-eclim source
-(require 'ac-emacs-eclim)
-(ac-emacs-eclim-config)
+;;(require 'ac-emacs-eclim)
+;;(ac-emacs-eclim-config)
 ;; エラー箇所にカーソルを当てるとエコーエリアに詳細を表示する
-(setq help-at-pt-display-when-idle t)
-(setq help-at-pt-timer-delay 0.1)
-(help-at-pt-set-timer)
+;;(setq help-at-pt-display-when-idle t)
+;;(setq help-at-pt-timer-delay 0.1)
+;;(help-at-pt-set-timer)
 ;; debug
 ;(eclim-toggle-print-debug-messages)
 ;;
-(define-key eclim-mode-map (kbd "C-c C-e ;") 'eclim-run-class)
+;;(define-key eclim-mode-map (kbd "C-c C-e ;") 'eclim-run-class)
 
 
 ;;; helm-ag
@@ -1429,3 +1471,12 @@
 
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
+ '(package-selected-packages
+   (quote
+    (win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org mozc magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim))))
