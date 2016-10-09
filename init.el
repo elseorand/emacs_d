@@ -291,8 +291,11 @@
 ;;; dired のkey割り当て追加
 (add-hook 'dired-mode-hook
  (lambda ()
+   (linum-mode 0)
    (define-key dired-mode-map (kbd "C-c w") 'uenox-dired-winstart)
-   (define-key dired-mode-map (kbd "C-c e") 'dired-exec-explorer)))
+   (define-key dired-mode-map (kbd "C-c e") 'dired-exec-explorer)
+;;; これでdired-launch-modeが有効になり[J]が使える
+   (dired-launch-enable)))
 
 ;; diredを2つのウィンドウで開いている時に、デフォルトの移動orコピー先をもう一方のdiredで開いているディレクトリにする
 (setq dired-dwim-target t)
@@ -1454,6 +1457,51 @@
                     (xwidget-browse-url-no-reuse url)))
 ;; webkit end
 
+;; mpv
+(require 'mpv)
+;;; Wiki(https://github.com/kljohann/mpv.el/wiki)より
+;;; C-c C-lでmpv:を選択したらmvpのリンクを補完付きで入力できる
+(org-add-link-type "mpv" #'mpv-play-and-prepare-memo)
+(defun mpv-play-and-prepare-memo (path)
+  (mpv-play path)
+  (kill-new "- 0:00:00 :: start\n"))
+(defun org-mpv-complete-link (&optional arg)
+  (replace-regexp-in-string
+   "file:" "mpv:"
+   (org-file-complete-link arg)
+   t t))
+
+;;; 再生位置をM-RETで挿入させる
+(defun org-timer-item--mpv-insert-playback-position (fun &rest args)
+  "When no org timer is running but mpv is alive, insert playback position."
+  (if (and
+       (not org-timer-start-time)
+       (mpv-live-p))
+      (mpv-insert-playback-position t)
+    (apply fun args)))
+(advice-add 'org-timer-item :around
+            #'org-timer-item--mpv-insert-playback-position)
+
+;;; 0:01:02のような文字列でC-c C-oしたらその位置にジャンプさせる
+(add-hook 'org-open-at-point-functions #'mpv-seek-to-position-at-point)
+
+;;; 表示されてる時間の3秒前に飛ぶように再定義
+(defun mpv-seek-to-position-at-point ()
+  "Jump to playback position as inserted by `mpv-insert-playback-position'.
+
+This can be used with the `org-open-at-point-functions' hook."
+  (interactive)
+  (save-excursion
+    (skip-chars-backward ":[:digit:]" (point-at-bol))
+    (when (looking-at "[0-9]+:[0-9]\\{2\\}:[0-9]\\{2\\}")
+      (let ((secs (max 0 (- (org-timer-hms-to-secs (match-string 0)) 3))))
+        (when (>= secs 0)
+          (mpv--enqueue `("seek" ,secs "absolute") #'ignore)
+)))))
+
+;;(global-set-key (kbd "H-SPC") 'mpv-pause)
+;;(global-set-key (kbd "H-b") 'mpv-seek-backward)
+
 ;; 行末の空白を削除
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
@@ -1479,4 +1527,4 @@
  '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
  '(package-selected-packages
    (quote
-    (win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org mozc magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim))))
+    (dired-launch mpv win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org mozc magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim))))
