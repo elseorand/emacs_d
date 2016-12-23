@@ -5,6 +5,10 @@
 ;;; Code:
 (setq debug-on-error nil)
 
+;;; patch start
+(setq text-quoting-style 'straight)
+;;; patch end
+
 ;;;utils Start
 (defun dateAdd(ymd add &optional pad)
   (interactive )
@@ -1050,7 +1054,7 @@
       popwin:special-display-config)
 (global-set-key (kbd "C-x j") 'direx:jump-to-directory-other-window)
 
-;; auto-complete
+;;; auto-complete start
 (require 'auto-complete-config)
 (ac-config-default)
 (global-auto-complete-mode t)
@@ -1074,7 +1078,19 @@
 			   ac-source-filename
 			   ac-source-words-in-same-mode-buffers))
 (global-set-key (kbd "C-:") 'auto-complete)
+;;; auto-complete end
 
+;;; company start
+(require 'company)
+;; C-n, C-pで補完候補を次/前の候補を選択
+(define-key company-active-map (kbd "C-n") 'company-select-next)
+(define-key company-active-map (kbd "C-p") 'company-select-previous)
+(define-key company-search-map (kbd "C-n") 'company-select-next)
+(define-key company-search-map (kbd "C-p") 'company-select-previous)
+
+;; TABで候補を設定
+(define-key company-active-map (kbd "C-i") 'company-complete-selection)
+;;; company end
 
 ;;; File 関連づけ Start
 (setq auto-mode-alist (append '(("\\.java$" . java-mode)
@@ -1098,6 +1114,15 @@
     (persp-add-buffer (get-buffer bufname))))
 (add-hook 'persp-activated-hook 'persp-register-buffers-on-create)
 ;;; persp mode Setting End
+
+;;; zoom-window start
+(require 'zoom-window)
+(setq zoom-window-use-persp t)
+(zoom-window-setup)
+
+(global-set-key (kbd "C-x 1") 'zoom-window-zoom)
+(setq zoom-window-mode-line-color "DarkGreen")
+;;; zoom-window end
 
 ;;;
 (require 'volatile-highlights)
@@ -1532,7 +1557,7 @@ This can be used with the `org-open-at-point-functions' hook."
  '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
  '(package-selected-packages
    (quote
-    (dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
+    (zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
