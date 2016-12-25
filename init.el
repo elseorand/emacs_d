@@ -9,6 +9,18 @@
 (setq text-quoting-style 'straight)
 ;;; patch end
 
+;;; key translation
+;; Backspace
+(define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
+;; kill back word
+(define-key key-translation-map (kbd "M-h") (kbd "<M-DEL>"))
+;; M-x
+(define-key key-translation-map (kbd "<muhenkan>") (kbd "M-x"))
+;; C-x
+(define-key key-translation-map (kbd "<hiragana-katakana>") (kbd "C-x"))
+
+;;; key translation
+
 ;;;utils Start
 (defun dateAdd(ymd add &optional pad)
   (interactive )
@@ -357,10 +369,6 @@
 (global-set-key (kbd "C-c s") 'start-multiple-cursors)
 
 ;; key-bind_s Settings Start
-;; Backspace
-(define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
-;; kill back word
-(define-key key-translation-map (kbd "M-h") (kbd "<M-DEL>"))
 ;; Goto Line
 (global-set-key (kbd "C-c C-j") 'goto-line)
 ;; scroll
