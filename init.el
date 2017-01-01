@@ -310,6 +310,7 @@
    (linum-mode 0)
    (define-key dired-mode-map (kbd "C-c w") 'uenox-dired-winstart)
    (define-key dired-mode-map (kbd "C-c e") 'dired-exec-explorer)
+   (dired-hide-details-mode)
 ;;; これでdired-launch-modeが有効になり[J]が使える
    (dired-launch-enable)))
 
@@ -582,8 +583,6 @@
 
 ;; Scala
 (require 'scala-mode)
-(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
-(add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
 
 (require 'ensime)
 (setq ensime-startup-snapshot-notification nil)
@@ -991,7 +990,8 @@
  '(rainbow-delimiters-depth-6-face ((t (:foreground "#1BaF1F" :weight bold))))
  '(rainbow-delimiters-depth-7-face ((t (:foreground "#66bbff" :weight bold))))
  '(rainbow-delimiters-depth-8-face ((t (:foreground "#0C00CC" :weight bold))))
- '(rainbow-delimiters-depth-9-face ((t (:foreground "#8E00CC" :weight bold)))))
+ '(rainbow-delimiters-depth-9-face ((t (:foreground "#8E00CC" :weight bold))))
+ '(web-mode-current-element-highlight-face ((t (:background "#eeeeee")))))
 
 ;; making unmatched parens stand out more
 (set-face-attribute 'rainbow-delimiters-unmatched-face nil
@@ -1042,6 +1042,10 @@
 
 ;;; js2 mode
 (autoload 'js2-mode "js2-mode" nil t)
+(add-hook 'js2-mode-hook (lambda()
+			   (setq js2-basic-offset 2)
+			   (setq tab-width 2)
+			   (setq indent-tabs-mode nil)))
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . js2-mode))
 
 ;;; tern mode
@@ -1069,7 +1073,6 @@
 (add-to-list 'ac-modes 'emacs-lisp-mode)
 (add-to-list 'ac-modes 'web-mode)
 (add-to-list 'ac-modes 'markdown-mode)
-(add-to-list 'ac-modes 'scala-mode)
 (add-to-list 'ac-modes 'powershell-mode)
 (add-to-list 'ac-modes 'org-mode)
 (setq ac-auto-start 3)

@@ -23,6 +23,7 @@
 	sgml-slash
 	upcase-region
 	yas-expand
+	dabbrev-expand
 	))
 
 (setq mc/cmds-to-run-once
