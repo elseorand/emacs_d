@@ -542,7 +542,7 @@
 
 
 ;; helm key settings
-(global-set-key (kbd "C-q") 'helm-mini)
+(global-set-key (kbd "C-c q") 'helm-mini)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
@@ -1536,6 +1536,8 @@ This can be used with the `org-open-at-point-functions' hook."
 
 ;;(global-set-key (kbd "H-SPC") 'mpv-pause)
 ;;(global-set-key (kbd "H-b") 'mpv-seek-backward)
+
+(require 'page-ext)
 
 ;; 行末の空白を削除
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
