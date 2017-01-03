@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: BASE snake small
+# key: ss
+# --
+${1:$$(replace-regexp-in-string " " "_" yas-text)}
