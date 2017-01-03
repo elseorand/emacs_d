@@ -189,7 +189,7 @@
 	      default-frame-alist))
 
 ;;; GC
-(setq gc-cons-threshold (* 512 1024 1024))
+(setq gc-cons-threshold (* 128 1024 1024))
 
 ;;; scroll-bar-mode
 (scroll-bar-mode -1)
