@@ -15,7 +15,6 @@
 	kill-region
 	mc/mark-all-dwim-or-mark-sexp
 	mouse-set-region
-	my/mc/insert-numbers
 	org-cycle
 	org-delete-char
 	org-self-insert-command
@@ -28,6 +27,7 @@
 
 (setq mc/cmds-to-run-once
       '(
+	my/mc/insert-numbers
 	ensime-mouse-motion
 	goto-line
 	helm-M-x

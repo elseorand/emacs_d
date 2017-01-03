@@ -70,12 +70,11 @@
 
 (defun snake-to-camel (s)
   ""
-  (setq s (downcase s))
-  (if (string-match "_" s)
-      (concat (let ((fs (substring s 0 (match-beginning 0))))
-                (concat (upcase (substring fs 0 1)) (substring fs 1 (length fs))))
-              (snake-to-camel (substring s (match-end 0) (length s))))
-    (concat (upcase (substring s 0 1)) (substring s 1 (length s)))))
+  (concat (apply `concat (mapcar `upcase-first (split-string str "_"))) (if (string-suffix-p "_" str) "_" "")))
+
+(defun space-to-camel (s)
+  ""
+  (snake-to-camel (replace-regexp-in-string " " "_" s)))
 
 (defun camel-to-snake (s)
   ""
@@ -92,9 +91,12 @@
 
 (defun upcase-first (s)
   ""
-  (concat
-   (upcase (substring s 0 1))
-   (substring s 1 (length s))))
+  (if (zerop (length s))
+      ""
+    (concat
+     (upcase (substring s 0 1))
+     (substring s 1 (length s)))
+    ))
 
 (defun downcase-first (s)
   ""
@@ -640,7 +642,6 @@
 
 ;; Initialization
 (add-hook 'ensime-mode-hook #'scala/enable-eldoc)
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 (add-hook 'scala-mode-hook 'flycheck-mode)
 
 ;; color-moccur

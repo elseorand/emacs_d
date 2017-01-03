@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ELISP cout
+# key: cout
+# --
+(message (concat "message: " $0))

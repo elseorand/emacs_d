@@ -1,0 +1,4 @@
+# key: upper
+# name: BASE uppercase
+# --
+${1:$$(upcase yas-text)}
