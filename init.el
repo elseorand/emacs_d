@@ -68,41 +68,39 @@
   (backward-word 1))
 (global-set-key (kbd "C-@") 'mark-pre-word)
 
-(defun snake-to-camel (s)
+(defun snake-to-camel (str)
   ""
-  (concat (apply `concat (mapcar `upcase-first (split-string str "_"))) (if (string-suffix-p "_" str) "_" "")))
+  (downcase-first (concat (apply `concat (mapcar `upcase-first (split-string str "_"))) (if (string-suffix-p "_" str) "_" ""))))
 
 (defun space-to-camel (s)
   ""
   (snake-to-camel (replace-regexp-in-string " " "_" s)))
 
 (defun camel-to-snake (s)
-  ""
   (save-match-data
     (let ((case-fold-search nil))
       (camel-to-snake-recursively s))))
 
 (defun camel-to-snake-recursively (s)
-  ""
   (let ((ss (downcase-first s)))
     (if (string-match "[A-Z]" ss)
         (concat (substring ss 0 (match-beginning 0)) "_" (camel-to-snake-recursively (substring ss (match-beginning 0) (length ss))))
       ss)))
 
 (defun upcase-first (s)
-  ""
   (if (zerop (length s))
-      ""
+      s
     (concat
      (upcase (substring s 0 1))
      (substring s 1 (length s)))
     ))
 
 (defun downcase-first (s)
-  ""
-  (concat
-   (downcase (substring s 0 1))
-   (substring s 1 (length s))))
+  (if (zerop (length s))
+      s
+      (concat
+       (downcase (substring s 0 1))
+       (substring s 1 (length s)))))
 
 (defun toggle-camelcase-underscores ()
   "Toggle between camcelcase and underscore notation for the symbol at point."

@@ -2,4 +2,4 @@
 # name: BASE snake
 # key: sn
 # --
-${1:$$(replace-regexp-in-string " " "_" yas-text)}
+${1:$$(upcase (replace-regexp-in-string " " "_" yas-text))}
