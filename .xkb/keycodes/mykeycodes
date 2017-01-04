@@ -1,0 +1,5 @@
+xkb_keycodes "mycodes" {
+    <MUHE> = 102;             // Muhenkan
+    <HENK> = 100;             // Henkan
+    <HKTG> = 101;	      // Kana
+};

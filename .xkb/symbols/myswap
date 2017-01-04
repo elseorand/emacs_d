@@ -1,0 +1,5 @@
+partial modifier_keys
+xkb_symbols "swapkeys" {
+  replace key <HENK> { [ Control_L ] };
+  modifier_map Control { <HENK> };
+};
