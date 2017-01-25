@@ -980,7 +980,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ricty" :foundry "unknown" :slant normal :weight normal :height 128 :width normal))))
+ '(default ((t (:family "Ricty" :foundry "unknown" :slant normal :weight normal :height 135 :width normal))))
  '(rainbow-delimiters-depth-1-face ((t (:foreground "#000000" :weight bold))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "#FF0010" :weight bold))))
  '(rainbow-delimiters-depth-3-face ((t (:foreground "#FF8D10" :weight bold))))
@@ -1541,6 +1541,9 @@ This can be used with the `org-open-at-point-functions' hook."
 
 ;; 行末の空白を削除
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;; font
+(add-to-list 'default-frame-alist '(font . "ricty-13.5"))
 
 ;; emacsclientを使えるようにする
 (server-start)
