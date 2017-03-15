@@ -1204,16 +1204,17 @@
           (isearch-repeat-forward)))
     ad-do-it))
 
-;; shell-quote-argumentの問題回避
-(defvar quote-argument-for-windows-p t "enables `shell-quote-argument' workaround for windows.")
-(defadvice shell-quote-argument (around shell-quote-argument-for-win activate)
- "workaround for windows."
- (if quote-argument-for-windows-p
- (let ((argument (ad-get-arg 0)))
-	(setq argument (replace-regexp-in-string "\\\\" "\\\\" argument nil t))
-	(setq argument (replace-regexp-in-string "'" "'\\''" argument nil t))
-	(setq ad-return-value argument))
- ad-do-it))
+;;; linuxではtrampと競合する
+;; ;; shell-quote-argumentの問題回避
+;; (defvar quote-argument-for-windows-p t "enables `shell-quote-argument' workaround for windows.")
+;; (defadvice shell-quote-argument (around shell-quote-argument-for-win activate)
+;;  "workaround for windows."
+;;  (if quote-argument-for-windows-p
+;;  (let ((argument (ad-get-arg 0)))
+;; 	(setq argument (replace-regexp-in-string "\\\\" "\\\\" argument nil t))
+;; 	(setq argument (replace-regexp-in-string "'" "'\\''" argument nil t))
+;; 	(setq ad-return-value argument))
+;;  ad-do-it))
 
 ;; (require 'eclim)
 ;; (require 'eclimd)
@@ -1393,6 +1394,12 @@
 
 ;; (require 'tramp)
 ;; (setq tramp-default-method "ssh")
+(add-to-list 'tramp-default-proxies-alist
+             '(nil "\\`root\\'" "/ssh:%h:"))
+(add-to-list 'tramp-default-proxies-alist
+             '("localhost" nil nil))
+(add-to-list 'tramp-default-proxies-alist
+             '((regexp-quote (system-name)) nil nil))
 
 (global-set-key (kbd "M-w") 'easy-kill)
 
