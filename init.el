@@ -1256,8 +1256,9 @@
 (require 'helm-config)
 (require 'helm-files)
 (require 'helm-ag)
-;; platinum searcher
-(setq helm-ag-base-command "pt --nocolor --nogroup")
+;; helm-ag
+;;; (setq helm-ag-base-command "pt --nocolor --nogroup")
+(setq helm-ag-base-command "rg --no-heading -S")
 ;;; 現在のシンボルをデフォルトのクエリにする
 (setq helm-ag-insert-at-point 'symbol)
 ;;; C-M-gはちょうどあいてる

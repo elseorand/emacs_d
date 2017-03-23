@@ -6,6 +6,8 @@
 	beginning-of-buffer
 	c-electric-delete-forward
 	c-electric-semi&comma
+	dabbrev-expand
+	dired-mark
 	downcase-region
 	easy-kill
 	electric-newline-and-maybe-indent
@@ -22,17 +24,16 @@
 	sgml-slash
 	upcase-region
 	yas-expand
-	dabbrev-expand
 	))
 
 (setq mc/cmds-to-run-once
       '(
-	my/mc/insert-numbers
 	ensime-mouse-motion
 	goto-line
 	helm-M-x
 	ignore
 	js2-mode-show-node
+	my/mc/insert-numbers
 	phi-search-migemo
 	point-undo
 	toggle-input-method
