@@ -1434,8 +1434,7 @@
 ;; C++ end
 
 ;; slack start
-
-
+(load "slack-init")
 ;; slack end
 
 ;; webkit start
