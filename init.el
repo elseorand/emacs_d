@@ -1433,6 +1433,10 @@
 
 ;; C++ end
 
+(setq load-path
+      (append '(
+                "~/.emacs.d/conf"
+                ) load-path))
 ;; slack start
 (load "slack-init")
 ;; slack end
