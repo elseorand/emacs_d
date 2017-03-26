@@ -1533,6 +1533,9 @@ This can be used with the `org-open-at-point-functions' hook."
 ;; 行末の空白を削除
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+;; paren close delimiter
+(global-set-key (kbd "M-]") 'paren-completer-add-single-delimiter)
+
 ;; font
 (add-to-list 'default-frame-alist '(font . "ricty-13.5"))
 
@@ -1563,7 +1566,7 @@ This can be used with the `org-open-at-point-functions' hook."
  '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
  '(package-selected-packages
    (quote
-    (zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
+    (paren-completer zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
