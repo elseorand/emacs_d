@@ -1394,7 +1394,7 @@
 ;;(sp-pair "<?" "?>")
 
 ;; (require 'tramp)
-;; (setq tramp-default-method "ssh")
+(setq tramp-default-method "ssh")
 (add-to-list 'tramp-default-proxies-alist
              '(nil "\\`root\\'" "/ssh:%h:"))
 (add-to-list 'tramp-default-proxies-alist
@@ -1437,9 +1437,9 @@
       (append '(
                 "~/.emacs.d/conf"
                 ) load-path))
-;; slack start
-(load "slack-init")
-;; slack end
+;; ;; slack start
+;; (load "slack-init")
+;; ;; slack end
 
 ;; webkit start
 

@@ -17,17 +17,23 @@
 	kill-region
 	mc/mark-all-dwim-or-mark-sexp
 	mouse-set-region
+	nxml-electric-slash
+	org-beginning-of-line
 	org-cycle
 	org-delete-char
+	org-end-of-line
 	org-self-insert-command
 	repeat-yank
 	sgml-slash
+	sp-remove-active-pair-overlay
+	suspend-frame
 	upcase-region
 	yas-expand
 	))
 
 (setq mc/cmds-to-run-once
       '(
+	dired-jump
 	ensime-mouse-motion
 	goto-line
 	helm-M-x
@@ -37,4 +43,8 @@
 	phi-search-migemo
 	point-undo
 	toggle-input-method
+	win-switch-dispatch
+	win-switch-exit
+	win-switch-exit-and-redo
+	win-switch-left
 	))
