@@ -698,7 +698,7 @@
 (setq org-return-follows-link t)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 ;; (org-remember-insinuate)
-(setq org-directory "~/OneDrive/Document/OrgAgenda/memo/")
+(setq org-directory "~/Dropbox/アプリ/MobileOrg/memo/")
 (setq org-default-notes-file (concat org-directory "agenda.org"))
 (setq org-capture-templates
       '(("t" "Todo" entry
@@ -710,14 +710,14 @@
         ("i" "Idea" entry
          (file+headline nil "New Ideas")
          "** %?\n   %i\n   %a\n   %t")
-	("p" "ProjectTask" entry(file+headline(expand-file-name "~/OneDrive/Document/OrgAgenda/project/project.org") "Inbox")
+	("p" "ProjectTask" entry(file+headline(expand-file-name "~/Dropbox/アプリ/MobileOrg/project/project.org") "Inbox")
          "** TODO %?\n   %i\n   %a\n   %t")
 	))
 ;;agendaを使用
 (require 'org-agenda)
 (dolist (file '("agenda.org" "archive.org" "memo.org"))
   (add-to-list 'org-agenda-files (concat org-directory file)))
-(add-to-list 'org-agenda-files "~/OneDrive/Document/OrgAgenda/project/project.org")
+(add-to-list 'org-agenda-files "~/Dropbox/アプリ/MobileOrg/project/project.org")
 ;; TODO状態
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)" "SOMEDAY(s)")))
@@ -726,7 +726,7 @@
 ;; TODO をCalendarに出力
 (setq org-icalendar-include-todo t)
 ;; Archive
-(setq org-archive-location "~/OneDrive/Document/OrgAgenda/archive.org::")
+(setq org-archive-location "~/Dropbox/アプリ/MobileOrg/archive.org::")
 (defun my:org-archive-done-tasks ()
   (interactive)
   ;; ARCHIVE タグを付けるだけなら以下
@@ -783,7 +783,7 @@
 
 ;; iCalendar
 (setq org-icalendar-include-todo t)
-(setq org-combined-agenda-icalendar-file "~/OneDrive/Document/OrgAgenda/calendar/my_schedule.ics")
+(setq org-combined-agenda-icalendar-file "~/Dropbox/アプリ/MobileOrg/calendar/my_schedule.ics")
 (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo))
 (setq org-icalendar-use-scheduled '(event-if-todo event-if-not-todo))
 
@@ -1402,6 +1402,7 @@
 (add-to-list 'tramp-default-proxies-alist
              '((regexp-quote (system-name)) nil nil))
 
+
 (global-set-key (kbd "M-w") 'easy-kill)
 
 ;; tab jump mode
@@ -1440,6 +1441,11 @@
 ;; ;; slack start
 ;; (load "slack-init")
 ;; ;; slack end
+
+;; dropbox start
+(load "dropbox-init")
+;; dropbox end
+
 
 ;; webkit start
 
@@ -1566,7 +1572,7 @@ This can be used with the `org-open-at-point-functions' hook."
  '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
  '(package-selected-packages
    (quote
-    (paren-completer zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
+    (paren-completer helm-tramp zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
