@@ -698,8 +698,8 @@
 (setq org-return-follows-link t)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 ;; (org-remember-insinuate)
-(setq org-directory "~/Dropbox/アプリ/MobileOrg/memo/")
-(setq org-default-notes-file (concat org-directory "agenda.org"))
+(setq org-directory "~/Dropbox/org/")
+(setq org-default-notes-file (concat org-directory "memo.org"))
 (setq org-capture-templates
       '(("t" "Todo" entry
          (file+headline nil "Inbox")
@@ -710,14 +710,14 @@
         ("i" "Idea" entry
          (file+headline nil "New Ideas")
          "** %?\n   %i\n   %a\n   %t")
-	("p" "ProjectTask" entry(file+headline(expand-file-name "~/Dropbox/アプリ/MobileOrg/project/project.org") "Inbox")
+	("p" "ProjectTask" entry(file+headline(expand-file-name "~/Dropbox/org/project/project.org") "Inbox")
          "** TODO %?\n   %i\n   %a\n   %t")
 	))
 ;;agendaを使用
 (require 'org-agenda)
-(dolist (file '("agenda.org" "archive.org" "memo.org"))
+(dolist (file '("agenda.org" "archive.org" "memo.org" "mobilepull.org"))
   (add-to-list 'org-agenda-files (concat org-directory file)))
-(add-to-list 'org-agenda-files "~/Dropbox/アプリ/MobileOrg/project/project.org")
+(add-to-list 'org-agenda-files "~/Dropbox/org/project/project.org")
 ;; TODO状態
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)" "SOMEDAY(s)")))
@@ -726,7 +726,7 @@
 ;; TODO をCalendarに出力
 (setq org-icalendar-include-todo t)
 ;; Archive
-(setq org-archive-location "~/Dropbox/アプリ/MobileOrg/archive.org::")
+(setq org-archive-location "~/Dropbox/org/archive.org::")
 (defun my:org-archive-done-tasks ()
   (interactive)
   ;; ARCHIVE タグを付けるだけなら以下
@@ -735,6 +735,11 @@
   (org-map-entries 'org-archive-subtree "/DONE" 'file))
 (add-hook 'org-todo-statistics-hook 'my:org-archive-done-tasks)
 (add-hook 'org-todo-after-statistics-hook 'my:org-archive-done-tasks)
+
+(setq org-mobile-inbox-for-pull "~/Dropbox/org/mobilepull.org") ;pullしたデータの置き場
+(setq org-mobile-directory "~/Dropbox/アプリ/MobileOrg") ;Androidのディレクトリ
+(setq org-mobile-files (list "~/Dropbox/org/agenda.org"
+			     "~/Dropbox/org/memo.org"))
 
 ;; org project
 (setq org-publish-project-alist
@@ -1443,7 +1448,7 @@
 ;; ;; slack end
 
 ;; dropbox start
-(load "dropbox-init")
+;; (load "dropbox-init")
 ;; dropbox end
 
 
