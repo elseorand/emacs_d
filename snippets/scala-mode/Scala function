@@ -4,4 +4,4 @@
 # binding: direct-keybinding
 # expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
 # --
-def $1${2:[${3:$$(upcase yas-text)}]}${4:($5)}${6:(f: $7 => $8)}: $9 = $0`(delete-char 1)`
+def $1${2:[${3:$$(upcase yas-text)}]}${4:($5)}${6:(implicit f: $7 => $8)}: $9 = $0`(delete-char 1)`

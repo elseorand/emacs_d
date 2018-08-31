@@ -195,19 +195,19 @@
 (scroll-bar-mode -1)
 
 ;;; linum-mode
-(global-linum-mode t)
-(setq linum-delay t)
-(defadvice linum-schedule (around my-linum-schedule () activate)
-  (run-with-idle-timer 1.0 nil #'linum-update-current))
-(line-number-mode 1)
-(column-number-mode 1)
-(setq linum-format "%3d ")
+;; (global-linum-mode t)
+;; (setq linum-delay t)
+;; (defadvice linum-schedule (around my-linum-schedule () activate)
+;;   (run-with-idle-timer 1.0 nil #'linum-update-current))
+;; (line-number-mode 1)
+;; (column-number-mode 1)
+;; (setq linum-format "%3d ")
 
 ;; 括弧のハイライト
 (show-paren-mode nil) ; これを設定しないとmultiple cursorsで順にハイライトされて重い
 (setq show-paren-style 'mixed) ; ウィンドウ内に収まらないときだけ括弧内も光らせる。
 (setq show-paren-delay 1)
-(set-face-attribute 'show-paren-match-face nil
+(set-face-attribute 'show-paren-match nil
                     :background "#DCC1A3" :foreground nil)
 
 ;;; Screen Settings End
@@ -314,7 +314,7 @@
 ;;; これでdired-launch-modeが有効になり[J]が使える
    (dired-launch-enable)))
 
-;; diredを2つのウィンドウで開いている時に、デフォルトの移動orコピー先をもう一方のdiredで開いているディレクトリにする
+; diredを2つのウィンドウで開いている時に、デフォルトの移動orコピー先をもう一方のdiredで開いているディレクトリにする
 (setq dired-dwim-target t)
 ;; ディレクトリを再帰的にコピーする
 (setq dired-recursive-copies 'always)
@@ -322,6 +322,21 @@
 (setq dired-isearch-filenames t)
 ;; wdired : enable change permissions
 (setq wdired-allow-to-change-permissions t)
+
+(defun dired-up-alternate-directory ()
+  "バッファを増やさず上のディレクトリに移動．"
+  (interactive)
+  (let* ((dir (dired-current-directory))
+         (up (file-name-directory (directory-file-name dir))))
+    (or (dired-goto-file (directory-file-name dir))
+        ;; Only try dired-goto-subdir if buffer has more than one dir.
+        (and (cdr dired-subdir-alist)
+             (dired-goto-subdir up))
+        (progn
+          (find-alternate-file up)
+          (dired-goto-file dir)))))
+
+(global-set-key (kbd "C-x C-j ") 'dired-jump)
 
 ;;; Dired Settings End
 
@@ -420,7 +435,7 @@
 ;;
 ;; helm settings
 ;;
-(require 'helm-anything nil t)
+;; (require 'helm-anything nil t)
 (require 'helm)
 
 (setq helm-buffer-max-length 100)
@@ -471,10 +486,10 @@
                 :$query $query :$multiline $multiline)))
 
 ;;; [2014-11-25 Tue]
-(when (featurep 'helm-anything)
-  (defadvice helm-resume (around helm-swoop-resume activate)
-    "helm-anything-resumeで復元できないのでその場合に限定して無効化"
-    ad-do-it))
+;; (when (featurep 'helm-anything)
+;;   (defadvice helm-resume (around helm-swoop-resume activate)
+;;     "helm-anything-resumeで復元できないのでその場合に限定して無効化"
+;;     ad-do-it))
 
 ;;; ace-isearch
 (global-ace-isearch-mode t)
@@ -509,20 +524,20 @@
 (advice-add 'occur-mode-goto-occurrence :after 'compilation-start--resume-goto)
 (advice-add 'compile-goto-error :after 'compilation-start--resume-goto)
 
-(defun helm-resume-and- (key)
-  (unless (eq helm-resume-goto-function 'next-error)
-    (if (fboundp 'helm-anything-resume)
-        (setq helm-anything-resume-function helm-resume-goto-function)
-      (setq helm-last-buffer (cadr helm-resume-goto-function)))
-    (execute-kbd-macro
-     (kbd (format "%s %s RET"
-                  (key-description (car (where-is-internal
-                                         (if (fboundp 'helm-anything-resume)
-                                             'helm-anything-resume
-                                           'helm-resume))))
-                  key)))
-    (message "Resuming %s" (cadr helm-resume-goto-function))
-    t))
+;; (defun helm-resume-and- (key)
+;;   (unless (eq helm-resume-goto-function 'next-error)
+;;     (if (fboundp 'helm-anything-resume)
+;;         (setq helm-anything-resume-function helm-resume-goto-function)
+;;       (setq helm-last-buffer (cadr helm-resume-goto-function)))
+;;     (execute-kbd-macro
+;;      (kbd (format "%s %s RET"
+;;                   (key-description (car (where-is-internal
+;;                                          (if (fboundp 'helm-anything-resume)
+;;                                              'helm-anything-resume
+;;                                            'helm-resume))))
+;;                   key)))
+;;     (message "Resuming %s" (cadr helm-resume-goto-function))
+;;     t))
 (defun helm-resume-and-previous ()
   "Relacement of `previous-error'"
   (interactive)
@@ -536,7 +551,7 @@
 
 ;;; Replace: next-error / previous-error
 (require 'helm-config)
-(ignore-errors (helm-anything-set-keys))
+;; (ignore-errors (helm-anything-set-keys))
 (global-set-key (kbd "M-g M-n") 'helm-resume-and-next)
 (global-set-key (kbd "M-g M-p") 'helm-resume-and-previous)
 
@@ -582,22 +597,33 @@
 ;; markdown-mode Settings End
 
 ;; Scala
-(require 'scala-mode)
+;; (require 'scala-mode)
 
-(require 'ensime)
+;;(require 'ensime)
 (setq ensime-startup-snapshot-notification nil)
-;; (defun my-ensime-sbt-do-compile(dir)
-;;   (interactive "DInput Auto Compiling target dir : ")
-;;   (message "dir : %s" dir )
-;;   (start-process-shell-command "activator_compile" "activator" (concat "cd " dir " | activator.bat ~compile") ))
+(defun my-ensime-sbt-do-compile(dir)
+  (interactive "DInput Auto Compiling target dir : ")
+  (message "dir : %s" dir )
+  (start-process-shell-command "activator_compile" "activator" (concat "cd " dir " | activator.bat ~compile") ))
 
-;; (defun my-ensime-sbt-do-test(dir)
-;;   (interactive "DInput Auto Testing target dir : ")
-;;   (message "dir : %s" dir )
-;;   (start-process-shell-command "activator_test" "activator" (concat "cd " dir " | activator.bat test") ))
-;; (defun my-ensime-scala-mode-hook ()
-;;   (define-key ensime-mode-map (kbd "C-c C-b c") 'my-ensime-sbt-do-compile)
-;; )
+(defun my-ensime-sbt-do-test(dir)
+  (interactive "DInput Auto Testing target dir : ")
+  (message "dir : %s" dir )
+  (start-process-shell-command "activator_test" "activator" (concat "cd " dir " | activator.bat test") ))
+(defun my-ensime-scala-mode-hook ()
+  (define-key ensime-mode-map (kbd "C-c C-b c") 'my-ensime-sbt-do-compile)
+)
+
+(use-package ensime
+  :ensure t
+  :pin melpa)
+
+(use-package sbt-mode
+  :pin melpa)
+
+(use-package scala-mode
+  :pin melpa)
+
 
 (defun scala/enable-eldoc ()
   "Show error message or type name at point by Eldoc."
@@ -1058,17 +1084,18 @@
       (require 'tern-auto-complete)
       (tern-ac-setup)))
 
-;;; direx
-(require 'popwin)
-(setq display-buffer-function 'popwin:display-buffer)
 
-(require 'direx)
-(setq direx:leaf-icon "  "
-      direx:open-icon "- "
-      direx:closed-icon "+ ")
-(push '(direx:direx-mode :position left :width 40 :dedicated t)
-      popwin:special-display-config)
-(global-set-key (kbd "C-x j") 'direx:jump-to-directory-other-window)
+;; (require 'popwin)
+;; (setq display-buffer-function 'popwin:display-buffer)
+
+;;; direx
+;; (require 'direx)
+;; (setq direx:leaf-icon "  "
+;;       direx:open-icon "- "
+;;       direx:closed-icon "+ ")
+;; (push '(direx:direx-mode :position left :width 40 :dedicated t)
+;;       popwin:special-display-config)
+;; (global-set-key (kbd "C-x j") 'direx:jump-to-directory-other-window)
 
 ;;; auto-complete start
 (require 'auto-complete-config)
@@ -1263,7 +1290,7 @@
 (require 'helm-ag)
 ;; helm-ag
 ;;; (setq helm-ag-base-command "pt --nocolor --nogroup")
-(setq helm-ag-base-command "rg --no-heading -S")
+(setq helm-ag-base-command "rg -g !*~ -g !*# --no-heading -S ")
 ;;; 現在のシンボルをデフォルトのクエリにする
 (setq helm-ag-insert-at-point 'symbol)
 ;;; C-M-gはちょうどあいてる
@@ -1365,7 +1392,7 @@
 (electric-operator-add-rules-for-mode
  'java-mode (cons "," ", ") (cons "=" " = ") (cons "==" " == ") (cons "->" " -> ") (cons "<" "<>") (cons ">" "> ") (cons ">(" ">()"))
 (electric-operator-add-rules-for-mode
- 'scala-mode (cons "=" " = ") (cons "<=" " <= ") (cons ">=" " >= ") (cons "==" " == ") (cons "=>" " => ") (cons "," ", ") (cons "=:=" " =:= ")
+ 'scala-mode (cons "=" " = ") (cons ":=" " := ") (cons "<=" " <= ") (cons ">=" " >= ") (cons "==" " == ") (cons "=>" " => ") (cons "," ", ") (cons "=:=" " =:= ")
  (cons "<:<" " <:< ") (cons ">:>" " >:> ") (cons ">:" " >: ") (cons "<:" " <: ") (cons "->" " -> ")
 )
 (electric-operator-add-rules-for-mode
@@ -1399,13 +1426,13 @@
 ;;(sp-pair "<?" "?>")
 
 ;; (require 'tramp)
-(setq tramp-default-method "ssh")
-(add-to-list 'tramp-default-proxies-alist
-             '(nil "\\`root\\'" "/ssh:%h:"))
-(add-to-list 'tramp-default-proxies-alist
-             '("localhost" nil nil))
-(add-to-list 'tramp-default-proxies-alist
-             '((regexp-quote (system-name)) nil nil))
+(setq tramp-default-method "scp")
+;; (add-to-list 'tramp-default-proxies-alist
+;;              '(nil "\\`root\\'" "/ssh:%h:"))
+;; (add-to-list 'tramp-default-proxies-alist
+;;              '("localhost" nil nil))
+;; (add-to-list 'tramp-default-proxies-alist
+;;              '((regexp-quote (system-name)) nil nil))
 
 
 (global-set-key (kbd "M-w") 'easy-kill)
@@ -1468,8 +1495,8 @@
 		      ;; make these keys behave like normal browser
 		      (define-key xwidget-webkit-mode-map [mouse-4] 'xwidget-webkit-scroll-down)
 		      (define-key xwidget-webkit-mode-map [mouse-5] 'xwidget-webkit-scroll-up)
-		      (define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidget-webkit-scroll-down)
-		      (define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidget-webkit-scroll-up)
+		      (define-key xwidget-webkit-mode-map (kbd "C-n") 'xwidget-webkit-scroll-down)
+		      (define-key xwidget-webkit-mode-map (kbd "C-p") 'xwidget-webkit-scroll-up)
 		      (define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidget-webkit-copy-selection-as-kill)
 		      (define-key xwidget-webkit-mode-map (kbd "C-/") 'xwidget-webkit-back)
 		      (define-key xwidget-webkit-mode-map (kbd "C-l") 'xwidget-webkit-reload)
@@ -1558,9 +1585,6 @@ This can be used with the `org-open-at-point-functions' hook."
 (prefer-coding-system 'utf-8) ;;powershellで文字化けが発生してしまう･･･
 
 (put 'narrow-to-region 'disabled nil)
-(provide '.emacs)
-;;; .emacs.el ends here
-
 
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -1577,7 +1601,12 @@ This can be used with the `org-open-at-point-functions' hook."
  '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
  '(package-selected-packages
    (quote
-    (paren-completer helm-tramp zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
+    (slack xwidgete paren-completer helm-tramp zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
+
+(diredp-toggle-find-file-reuse-dir 1)
+
+(provide '.emacs)
+;;; .emacs.el ends here
