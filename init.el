@@ -342,6 +342,7 @@
 ;;; Dired settings Start
 
 (require 'dired)
+(put 'dired-find-alternate-file 'disabled nil)
 (define-key dired-mode-map (kbd "C-s") 'phi-search-dired)
 ;;; 表示を整えるアドバイス
 (defun phi-search-dired-restrict-to-matches--show-all ()
@@ -376,7 +377,8 @@
 ;;   (interactive)
 ;;   (message "%s" (dired-current-directory))
 ;;   (explorer (dired-current-directory)))
-
+(require 'dired+)
+(diredp-toggle-find-file-reuse-dir 1)
 ;;; dired のkey割り当て追加
 (add-hook 'dired-mode-hook
  (lambda ()
@@ -385,7 +387,8 @@
    ;; (define-key dired-mode-map (kbd "C-c e") 'dired-exec-explorer)
    (dired-hide-details-mode)
 ;;; これでdired-launch-modeが有効になり[J]が使える
-   (dired-launch-enable)))
+   (dired-launch-enable)
+))
 
 ; diredを2つのウィンドウで開いている時に、デフォルトの移動orコピー先をもう一方のdiredで開いているディレクトリにする
 (setq dired-dwim-target t)
@@ -1093,14 +1096,14 @@
 (require 'popwin)
 (setq display-buffer-function 'popwin:display-buffer)
 
-;;; direx
-(require 'direx)
-(setq direx:leaf-icon "  "
-      direx:open-icon "- "
-      direx:closed-icon "+ ")
-(push '(direx:direx-mode :position left :width 40 :dedicated t)
-      popwin:special-display-config)
-(global-set-key (kbd "C-x j") 'direx:jump-to-directory-other-window)
+;; ;;; direx
+;; (require 'direx)
+;; (setq direx:leaf-icon "  "
+;;       direx:open-icon "- "
+;;       direx:closed-icon "+ ")
+;; (push '(direx:direx-mode :position left :width 40 :dedicated t)
+;;       popwin:special-display-config)
+;; (global-set-key (kbd "C-x j") 'direx:jump-to-directory-other-window)
 
 ;; ;;; auto-complete start
 ;; (require 'auto-complete-config)
@@ -1554,12 +1557,10 @@ This can be used with the `org-open-at-point-functions' hook."
  '(eclimd-wait-for-process nil)
  '(package-selected-packages
    (quote
-    (flycheck-pos-tip company-lsp lsp-mode hiwin async-await xwidgete paren-completer helm-tramp zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
+    (flycheck-pos-tip company-lsp lsp-mode hiwin async-await xwidgete paren-completer helm-tramp zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
-
-(diredp-toggle-find-file-reuse-dir 1)
 
 (provide '.emacs)
 ;;; .emacs.el ends here
