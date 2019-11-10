@@ -387,7 +387,7 @@
 ;;; これでdired-launch-modeが有効になり[J]が使える
    (dired-launch-enable)))
 
-;; diredを2つのウィンドウで開いている時に、デフォルトの移動orコピー先をもう一方のdiredで開いているディレクトリにする
+; diredを2つのウィンドウで開いている時に、デフォルトの移動orコピー先をもう一方のdiredで開いているディレクトリにする
 (setq dired-dwim-target t)
 ;; ディレクトリを再帰的にコピーする
 (setq dired-recursive-copies 'always)
@@ -489,10 +489,10 @@
                 :$query $query :$multiline $multiline)))
 
 ;;; [2014-11-25 Tue]
-(when (featurep 'helm-anything)
-  (defadvice helm-resume (around helm-swoop-resume activate)
-    "helm-anything-resumeで復元できないのでその場合に限定して無効化"
-    ad-do-it))
+;; (when (featurep 'helm-anything)
+;;   (defadvice helm-resume (around helm-swoop-resume activate)
+;;     "helm-anything-resumeで復元できないのでその場合に限定して無効化"
+;;     ad-do-it))
 
 ;;; ace-isearch
 (global-ace-isearch-mode t)
@@ -527,20 +527,20 @@
 (advice-add 'occur-mode-goto-occurrence :after 'compilation-start--resume-goto)
 (advice-add 'compile-goto-error :after 'compilation-start--resume-goto)
 
-(defun helm-resume-and- (key)
-  (unless (eq helm-resume-goto-function 'next-error)
-    (if (fboundp 'helm-anything-resume)
-        (setq helm-anything-resume-function helm-resume-goto-function)
-      (setq helm-last-buffer (cadr helm-resume-goto-function)))
-    (execute-kbd-macro
-     (kbd (format "%s %s RET"
-                  (key-description (car (where-is-internal
-                                         (if (fboundp 'helm-anything-resume)
-                                             'helm-anything-resume
-                                           'helm-resume))))
-                  key)))
-    (message "Resuming %s" (cadr helm-resume-goto-function))
-    t))
+;; (defun helm-resume-and- (key)
+;;   (unless (eq helm-resume-goto-function 'next-error)
+;;     (if (fboundp 'helm-anything-resume)
+;;         (setq helm-anything-resume-function helm-resume-goto-function)
+;;       (setq helm-last-buffer (cadr helm-resume-goto-function)))
+;;     (execute-kbd-macro
+;;      (kbd (format "%s %s RET"
+;;                   (key-description (car (where-is-internal
+;;                                          (if (fboundp 'helm-anything-resume)
+;;                                              'helm-anything-resume
+;;                                            'helm-resume))))
+;;                   key)))
+;;     (message "Resuming %s" (cadr helm-resume-goto-function))
+;;     t))
 (defun helm-resume-and-previous ()
   "Relacement of `previous-error'"
   (interactive)
@@ -554,7 +554,7 @@
 
 ;;; Replace: next-error / previous-error
 (require 'helm-config)
-(ignore-errors (helm-anything-set-keys))
+;; (ignore-errors (helm-anything-set-keys))
 (global-set-key (kbd "M-g M-n") 'helm-resume-and-next)
 (global-set-key (kbd "M-g M-p") 'helm-resume-and-previous)
 
@@ -1349,7 +1349,7 @@
 (electric-operator-add-rules-for-mode
  'java-mode (cons "," ", ") (cons "=" " = ") (cons "==" " == ") (cons "->" " -> ") (cons "<" "<>") (cons ">" "> ") (cons ">(" ">()"))
 (electric-operator-add-rules-for-mode
- 'scala-mode (cons "=" " = ") (cons "<=" " <= ") (cons ">=" " >= ") (cons "==" " == ") (cons "=>" " => ") (cons "," ", ") (cons "=:=" " =:= ")
+ 'scala-mode (cons "=" " = ") (cons ":=" " := ") (cons "<=" " <= ") (cons ">=" " >= ") (cons "==" " == ") (cons "=>" " => ") (cons "," ", ") (cons "=:=" " =:= ")
  (cons "<:<" " <:< ") (cons ">:>" " >:> ") (cons ">:" " >: ") (cons "<:" " <: ") (cons "->" " -> ")
 )
 (electric-operator-add-rules-for-mode
@@ -1539,9 +1539,6 @@ This can be used with the `org-open-at-point-functions' hook."
 (set-default-coding-systems 'utf-8-unix)
 
 (put 'narrow-to-region 'disabled nil)
-(provide '.emacs)
-;;; .emacs.el ends here
-
 
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -1561,3 +1558,8 @@ This can be used with the `org-open-at-point-functions' hook."
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
+
+(diredp-toggle-find-file-reuse-dir 1)
+
+(provide '.emacs)
+;;; .emacs.el ends here
