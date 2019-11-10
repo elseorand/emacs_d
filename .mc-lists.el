@@ -42,6 +42,7 @@
 	my/mc/insert-numbers
 	phi-search-migemo
 	point-undo
+	start-multiple-cursors
 	toggle-input-method
 	win-switch-dispatch
 	win-switch-exit

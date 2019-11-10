@@ -2,24 +2,104 @@
 
 ;;; Commentary: enabled lexical-binding. Please pay attention to using setq.
 
+;;; Packages Setting Start
+(require 'package)
+;; MELPAを追加
+(add-to-list 'package-archives '("melpa" . "https://melpa.milkbox.net/packages/"))
+;; Marmaladeを追加
+;; (add-to-list 'package-archives  '("marmalade" . "https://marmalade-repo.org/packages/"))
+;; 初期化
+(package-initialize)
+(require 'use-package)
+;;; Packages Setting End
+
+(setq lexical-binding t)
+
+;;; GC
+(setq gc-cons-threshold (* 512 1024 1024))
+
 ;;; Code:
 (setq debug-on-error nil)
+;; tab width
+(setq-default indent-tabs-mode nil) ; tab => SPC
+(setq-default tab-width 2)
+;; 行末の空白を削除
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;; patch start
 (setq text-quoting-style 'straight)
 ;;; patch end
 
-;;; key translation
+;;; key translation start
+;; Hyper
 ;; Backspace
 (define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 ;; kill back word
 (define-key key-translation-map (kbd "M-h") (kbd "<M-DEL>"))
-;; M-x
-(define-key key-translation-map (kbd "<muhenkan>") (kbd "M-x"))
+;; C-c y
+(define-key key-translation-map (kbd "<muhenkan>") (kbd "C-c y"))
 ;; C-x
 (define-key key-translation-map (kbd "<hiragana-katakana>") (kbd "C-x"))
+(global-set-key (kbd "M-w") 'easy-kill)
 
-;;; key translation
+;;; key translation end
+
+;;; Screen Settings Start
+(tool-bar-mode 0)
+(menu-bar-mode 0)
+(scroll-bar-mode -1)
+
+;;; マウスカーソルを消す設定
+(setq w32-hide-mouse-on-key t)
+(setq w32-hide-mouse-timeout 5000)
+
+;;; hide welcome screen
+(setq inhibit-startup-message t)
+
+;;; font-lockの設定
+(global-font-lock-mode t)
+
+;; 領域削除:領域選択状態でCtrl+Dで削除
+(delete-selection-mode 1)
+
+;; スクリーンの最大化
+(set-frame-parameter nil 'fullscreen 'maximized)
+;; 初期フレームの設定 Meadow風
+(setq default-frame-alist
+      (append (list '(foreground-color . "black")
+		    '(background-color . "lemonchiffon")
+		    '(border-color . "black")
+		    '(mouse-color . "white")
+		    '(cursor-color . "black")
+		    '(width . 150)
+		    '(height . 36)
+		    '(top . 0)
+		    '(left . 0)
+		    )
+	      default-frame-alist))
+
+;;; linum-mode
+(global-linum-mode t)
+(setq linum-delay t)
+(defadvice linum-schedule (around my-linum-schedule () activate)
+  (run-with-idle-timer 1.0 nil #'linum-update-current))
+(line-number-mode 1)
+(column-number-mode 1)
+(setq linum-format "%3d ")
+
+;; 括弧のハイライト
+(show-paren-mode nil) ; これを設定しないとmultiple cursorsで順にハイライトされて重い
+(setq show-paren-style 'mixed) ; ウィンドウ内に収まらないときだけ括弧内も光らせる。
+(setq show-paren-delay 1)
+(set-face-attribute 'show-paren-match nil
+      :background "#DCC1A3")
+
+;;; Screen Settings End
+
+;;; command start
+(setq grep-command "rg ")
+
+;;; command end
 
 ;;;utils Start
 (defun dateAdd(ymd add &optional pad)
@@ -29,13 +109,13 @@
    (time-add (date-to-time (concat ymd "T00:00:00"))
 	     (days-to-time add))))
 
-(defun counter-factory(&optional init &optional inc)
+(defun counter-factory(&optional init inc)
   (let ((count (or init 0)) (increase (or inc 1)))
     #'(lambda (&optional cmd)
-	(case cmd
-	  ((peek :peek) count)
-	  ((reset :reset) (setq count (or init 0)))
-	  (t (setq count (+ count increase)) count)))))
+        (case cmd
+          ((peek :peek) count)
+          ((reset :reset) (setq count (or init 0)))
+          (t (setq count (+ count increase)) count)))))
 
 (defun string-factory(&optional head &optional sep)
   (let ((stored (or head ""))(mysep (or sep "\n")))
@@ -68,13 +148,21 @@
   (backward-word 1))
 (global-set-key (kbd "C-@") 'mark-pre-word)
 
-(defun snake-to-camel (str)
+(defun snake-to-camel (s &optional capitalize)
   ""
-  (downcase-first (concat (apply `concat (mapcar `upcase-first (split-string str "_"))) (if (string-suffix-p "_" str) "_" ""))))
+  (let ((case-fold-search nil))
+    (replace-regexp-in-string
+     "_\\([a-zA-Z]\\)"
+     (lambda (s2)(upcase (substring s2 1)))
+     (concat (if capitalize "_" "") s))))
 
 (defun space-to-camel (s)
   ""
   (snake-to-camel (replace-regexp-in-string " " "_" s)))
+
+(defun space-to-snake (s)
+  ""
+  (replace-regexp-in-string " " "_" s))
 
 (defun camel-to-snake (s)
   (save-match-data
@@ -86,14 +174,6 @@
     (if (string-match "[A-Z]" ss)
         (concat (substring ss 0 (match-beginning 0)) "_" (camel-to-snake-recursively (substring ss (match-beginning 0) (length ss))))
       ss)))
-
-(defun upcase-first (s)
-  (if (zerop (length s))
-      s
-    (concat
-     (upcase (substring s 0 1))
-     (substring s 1 (length s)))
-    ))
 
 (defun downcase-first (s)
   (if (zerop (length s))
@@ -122,6 +202,7 @@
 (defun my/filter (condp lst)
   (delq nil
         (mapcar (lambda (x) (and (funcall condp x) x)) lst)))
+
 (defun kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
@@ -153,64 +234,57 @@
                                      (get-buffer buffer-name))
                                   no-kill-buffer-names))))
     (mapc 'kill-buffer buffers-to-kill)))
+
+(defun my/get-current-path ()
+  (if (equal major-mode 'dired-mode-map)
+      default-directory
+    (or buffer-file-name (buffer-name))))
+
+(defun my/copy-current-path ()
+  (interactive)
+  ""
+  (let ((fPath (my/get-current-path)))
+    (when fPath
+      (kill-new (file-truename fPath)))))
+
+(global-set-key (kbd "C-c f") 'my/copy-current-path)
+
+(defun my/copy-filename ()
+  (interactive)
+  (kill-new
+   (file-name-nondirectory
+    (buffer-file-name))))
+(global-set-key (kbd "C-c b") 'my/copy-filename)
+
+(defun insert-current-time ()
+  (interactive)
+  (inset (format-time-string "%Y-%m-%d" (current-time))))
+(global-set-key (kbd "C-c d") 'insert-current-time)
+
+;; repeat yank
+(defun repeat-yank (num)
+  (interactive "NRepeat Count > ")
+  (dotimes (i num)
+    (yank)
+    (insert "\n")))
+;; repeat yank settings
+(global-set-key (kbd "C-x C-y ") 'repeat-yank)
+
+;; scroll
+(defun scroll-down-with-cursor(n)
+  (interactive "p")
+  (forward-line n)
+  (scroll-up n))
+(defun scroll-up-with-cursor(n)
+  (interactive "p")
+  (forward-line (- n))
+  (scroll-down n))
+;; (global-set-key (kbd "M-n") 'scroll-down-with-cursor)
+;; (global-set-key (kbd "M-p")   'scroll-up-with-cursor)
+(global-set-key (kbd "M-n") (lambda() (interactive) (scroll-up 1)))
+(global-set-key (kbd "M-p") (lambda() (interactive) (scroll-down 1)))
+
 ;;; utils End
-
-;;; Screen Settings Start
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-
-;;; マウスカーソルを消す設定
-(setq w32-hide-mouse-on-key t)
-(setq w32-hide-mouse-timeout 5000)
-
-;;; hide welcome screen
-(setq inhibit-startup-message t)
-
-;;; font-lockの設定
-(global-font-lock-mode t)
-
-;; 領域削除:領域選択状態でCtrl+Dで削除
-(delete-selection-mode 1)
-
-;; スクリーンの最大化
-(set-frame-parameter nil 'fullscreen 'maximized)
-;; 初期フレームの設定 Meadow風
-(setq default-frame-alist
-      (append (list '(foreground-color . "black")
-		    '(background-color . "lemonchiffon")
-		    '(border-color . "black")
-		    '(mouse-color . "white")
-		    '(cursor-color . "black")
-		    '(width . 150)
-		    '(height . 36)
-		    '(top . 0)
-		    '(left . 0)
-		    )
-	      default-frame-alist))
-
-;;; GC
-(setq gc-cons-threshold (* 128 1024 1024))
-
-;;; scroll-bar-mode
-(scroll-bar-mode -1)
-
-;;; linum-mode
-(global-linum-mode t)
-(setq linum-delay t)
-(defadvice linum-schedule (around my-linum-schedule () activate)
-  (run-with-idle-timer 1.0 nil #'linum-update-current))
-(line-number-mode 1)
-(column-number-mode 1)
-(setq linum-format "%3d ")
-
-;; 括弧のハイライト
-(show-paren-mode nil) ; これを設定しないとmultiple cursorsで順にハイライトされて重い
-(setq show-paren-style 'mixed) ; ウィンドウ内に収まらないときだけ括弧内も光らせる。
-(setq show-paren-delay 1)
-(set-face-attribute 'show-paren-match-face nil
-                    :background "#DCC1A3" :foreground nil)
-
-;;; Screen Settings End
 
 ;; japanese input 二重のnn で ん
 (setq quail-japanese-use-double-n t)
@@ -265,7 +339,6 @@
 ;;   (shell-command (concat "$firstBuffer=$(Convert-HString @\"\n" firstBuffer "\n\"@); $secondBuffer=$(Convert-HString @\"\n" secondBuffer "\n\"@); diff $firstBuffer $secondBuffer" ))
 ;;   )
 
-
 ;;; Dired settings Start
 
 (require 'dired)
@@ -279,37 +352,37 @@
 (advice-add 'phi-search-dired-restrict-to-matches :after
             'phi-search-dired-restrict-to-matches--show-all)
 
-;; diredでWindowsに関連付けられたAppを起動する
-(defun uenox-dired-winstart ()
- "Type '[uenox-dired-winstart]': win-start the current line's file."
- (interactive)
- (if (eq major-mode 'dired-mode)
- (let ((fname (dired-get-filename)))
- (w32-shell-execute "open" fname)
- (message "win-started %s" fname))))
+;; ;; diredでWindowsに関連付けられたAppを起動する
+;; (defun uenox-dired-winstart ()
+;;  "Type '[uenox-dired-winstart]': win-start the current line's file."
+;;  (interactive)
+;;  (if (eq major-mode 'dired-mode)
+;;  (let ((fname (dired-get-filename)))
+;;  (w32-shell-execute "open" fname)
+;;  (message "win-started %s" fname))))
 
-(defun explorer (&optional path)
-  "引数があればそのパスの、引数が省略されていれば現在のバッファのファイルを、explorerで開きます。"
-  (interactive)
-  (setq path (expand-file-name (or path (buffer-file-name))))
-  (cond
-    ((not (file-exists-p path))
-     (message "path %s isn't exist" path))
-    (t
-     (let ((dos-path (replace-regexp-in-string "/" "\\\\" path)))
-       (w32-shell-execute "open" "explorer.exe" dos-path)))));;(concat "/select," dos-path) => dos-pathを選択した状態で開く
-(defun dired-exec-explorer ()
-  "In dired, execute Explorer"
-  (interactive)
-  (message "%s" (dired-current-directory))
-  (explorer (dired-current-directory)))
+;; (defun explorer (&optional path)
+;;   "引数があればそのパスの、引数が省略されていれば現在のバッファのファイルを、explorerで開きます。"
+;;   (interactive)
+;;   (setq path (expand-file-name (or path (buffer-file-name))))
+;;   (cond
+;;     ((not (file-exists-p path))
+;;      (message "path %s isn't exist" path))
+;;     (t
+;;      (let ((dos-path (replace-regexp-in-string "/" "\\\\" path)))
+;;        (w32-shell-execute "open" "explorer.exe" dos-path)))));;(concat "/select," dos-path) => dos-pathを選択した状態で開く
+;; (defun dired-exec-explorer ()
+;;   "In dired, execute Explorer"
+;;   (interactive)
+;;   (message "%s" (dired-current-directory))
+;;   (explorer (dired-current-directory)))
 
 ;;; dired のkey割り当て追加
 (add-hook 'dired-mode-hook
  (lambda ()
    (linum-mode 0)
-   (define-key dired-mode-map (kbd "C-c w") 'uenox-dired-winstart)
-   (define-key dired-mode-map (kbd "C-c e") 'dired-exec-explorer)
+   ;; (define-key dired-mode-map (kbd "C-c w") 'uenox-dired-winstart)
+   ;; (define-key dired-mode-map (kbd "C-c e") 'dired-exec-explorer)
    (dired-hide-details-mode)
 ;;; これでdired-launch-modeが有効になり[J]が使える
    (dired-launch-enable)))
@@ -323,69 +396,16 @@
 ;; wdired : enable change permissions
 (setq wdired-allow-to-change-permissions t)
 
+(global-set-key (kbd "C-x C-j ") 'dired-jump)
+
 ;;; Dired Settings End
-
-;;; Packages Setting Start
-(require 'package)
-;; MELPAを追加
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-;; Marmaladeを追加
-;; (add-to-list 'package-archives  '("marmalade" . "https://marmalade-repo.org/packages/"))
-;; 初期化
-(package-initialize)
-
-;;; Packages Setting End
 
 ;; emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.el$" . emacs-lisp-mode))
 
-;; my def func_s
-;; repeat yank
-(defun repeat-yank (num)
-  (interactive "NRepeat Count > ")
-  (dotimes (i num)
-    (yank)
-    (insert "\n")))
-;; repeat yank settings
-(global-set-key (kbd "C-x C-y ") 'repeat-yank)
-
-(defun start-multiple-cursors(num start)
-  (interactive "NCursors num > \nsStart word > ")
-  (set-mark-command nil)
-  (let ((prepos (current-column)) (loop (- num 1)))
-    (message "prepos : %s" prepos)
-    (dotimes (i loop)
-      (insert start )
-      (if (equal (line-number-at-pos)  (count-lines (window-start) (window-end)))
-	  (insert "\n") (progn (forward-line) (forward-char prepos))
-	  )
-      )
-    (insert start )
-    (end-of-line)
-    (exchange-point-and-mark)
-    (mc/edit-ends-of-lines)
-    )
-  )
-
-(global-set-key (kbd "C-c s") 'start-multiple-cursors)
-
 ;; key-bind_s Settings Start
 ;; Goto Line
-(global-set-key (kbd "C-c C-j") 'goto-line)
-;; scroll
-(defun scroll-down-with-cursor(n)
-  (interactive "p")
-  (forward-line n)
-  (scroll-up n))
-(defun scroll-up-with-cursor(n)
-  (interactive "p")
-  (forward-line (- n))
-  (scroll-down n))
-(global-set-key (kbd "M-n") 'scroll-down-with-cursor)
-(global-set-key (kbd "M-p")   'scroll-up-with-cursor)
-;;(global-set-key (kbd "C-M-n") (lambda() (interactive) (scroll-up 1)))
-;;(global-set-key (kbd "C-M-p") (lambda() (interactive) (scroll-down 1)))
-
+(global-unset-key (kbd "C-x C-c"))
 ;; key-bind_s Settings End
 
 ;; IME
@@ -417,9 +437,7 @@
 ;(global-set-key (kbd "M-y") 'anything-show-kill-ring)
 ;(global-set-key (kbd "C-x M-x") 'anything-M-x)
 
-;;
 ;; helm settings
-;;
 (require 'helm-anything nil t)
 (require 'helm)
 
@@ -582,65 +600,41 @@
 ;; markdown-mode Settings End
 
 ;; Scala
-(require 'scala-mode)
+(setq use-package-always-defer t
+      use-package-always-ensure t
+      backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
-(require 'ensime)
-(setq ensime-startup-snapshot-notification nil)
-;; (defun my-ensime-sbt-do-compile(dir)
-;;   (interactive "DInput Auto Compiling target dir : ")
-;;   (message "dir : %s" dir )
-;;   (start-process-shell-command "activator_compile" "activator" (concat "cd " dir " | activator.bat ~compile") ))
+;; Enable scala-mode and sbt-mode
+(use-package scala-mode
+  :mode "\\.s\\(cala\\|bt\\)$")
 
-;; (defun my-ensime-sbt-do-test(dir)
-;;   (interactive "DInput Auto Testing target dir : ")
-;;   (message "dir : %s" dir )
-;;   (start-process-shell-command "activator_test" "activator" (concat "cd " dir " | activator.bat test") ))
-;; (defun my-ensime-scala-mode-hook ()
-;;   (define-key ensime-mode-map (kbd "C-c C-b c") 'my-ensime-sbt-do-compile)
-;; )
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+   (setq sbt:program-options '("-Dsbt.supershell=false"))
+)
 
-(defun scala/enable-eldoc ()
-  "Show error message or type name at point by Eldoc."
-  (setq-local eldoc-documentation-function
-              #'(lambda ()
-                  (when (ensime-connected-p)
-                    (let ((err (ensime-print-errors-at-point)))
-                      (or (and err (not (string= err "")) err)
-                          (ensime-print-type-at-point))))))
-  (eldoc-mode +1))
+;; Enable nice rendering of diagnostics like compile errors.
+(use-package flycheck
+  :init (global-flycheck-mode))
 
-(defun scala/completing-dot-company ()
-  (cond (company-backend
-         (company-complete-selection)
-         (scala/completing-dot))
-        (t
-         (insert ".")
-         (company-complete))))
+(use-package lsp-mode
+  ;; Optional - enable lsp-mode automatically in scala files
+  :hook (scala-mode . lsp)
+  :config (setq lsp-prefer-flymake nil))
 
-(defun scala/completing-dot-ac ()
-  (insert ".")
-  (ac-trigger-key-command t))
+(use-package lsp-ui)
 
-;; Interactive commands
-
-(defun scala/completing-dot ()
-  "Insert a period and show company completions."
-  (interactive "*")
-  (eval-and-compile (require 'ensime))
-  (eval-and-compile (require 's))
-  (when (s-matches? (rx (+ (not space)))
-                    (buffer-substring (line-beginning-position) (point)))
-    (delete-horizontal-space t))
-  (cond ((not (and (ensime-connected-p) ensime-completion-style))
-         (insert "."))
-        ((eq ensime-completion-style 'company)
-         (scala/completing-dot-company))
-        ((eq ensime-completion-style 'auto-complete)
-         (scala/completing-dot-ac))))
-
-;; Initialization
-(add-hook 'ensime-mode-hook #'scala/enable-eldoc)
-(add-hook 'scala-mode-hook 'flycheck-mode)
+;; Add company-lsp backend for metals
+(use-package company-lsp)
 
 ;; color-moccur
 ;;(when (require 'color-moccur nil t)
@@ -657,10 +651,9 @@
 (when (require 'undohist nil t)
   (undohist-initialize))
 (require 'undohist)
-(undohist-initialize)
 ;;; 永続化を無視するファイル名の正規表現
 (setq undohist-ignored-files
-      '("/tmp/"))
+      '("/tmp/" "COMMIT_EDITMSG"))
 ;;; NTEmacsだと動かないらしいので再定義
 ;;; http://d.hatena.ne.jp/Lian/20120420/1334856445
 (when (eq system-type 'windows-nt)
@@ -773,10 +766,10 @@
 (setq org-src-fontify-natively t)
 
 ;; ショートカットキー
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-co" 'org-capture)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
+(global-set-key "\C-c l" 'org-store-link)
+(global-set-key "\C-c o" 'org-capture)
+(global-set-key "\C-c a" 'org-agenda)
+; x(global-set-key "\C-c b" 'org-iswitchb)
 
 (add-hook 'org-mode-hook 'turn-on-font-lock)
 ;; org-modeではExcelへの貼り付けやすさのため､階層は全てTabインデント
@@ -878,19 +871,35 @@
 (global-set-key (kbd "C-M-SPC") 'mc/mark-all-dwim-or-mark-sexp)
 
 ;; insert specific serial number
- (defun my/mc/insert-numbers (start inc pad)
-   "Insert increasing numbers for each cursor specifically."
-   (interactive
-    (list (read-number "Start from: " 0)
-          (read-number "Increment by: " 1)
-          (read-string "Padding (%01d): "  "%01d")))
-   (let ((start_num start))
-     (setq counter (counter-factory (- start_num inc) inc))
-     (fset 'tmp_increase (lambda () (interactive)(insert (format pad (funcall counter)))))
-     (mc/for-each-cursor-ordered
-      (mc/execute-command-for-fake-cursor
-       'tmp_increase
-       cursor))))
+(defun my/mc/insert-numbers (start inc pad)
+  "Insert increasing numbers for each cursor specifically."
+  (interactive
+   (list (read-number "Start from: " 0)
+	 (read-number "Increment by: " 1)
+	 (read-string "Padding (%01d): "  "%01d")))
+  (let ((start_num start))
+    (setq counter (counter-factory (- start_num inc) inc))
+    (fset 'tmp_increase (lambda () (interactive)(insert (format pad (funcall counter)))))
+    (mc/for-each-cursor-ordered
+     (mc/execute-command-for-fake-cursor
+      'tmp_increase
+      cursor))))
+
+(defun my/mc/insert-chars (start inc)
+  ""
+  (interactive
+   (list (read-string "Start from: " "a")
+	 (read-number "Increment by: " 1)))
+  (let ((start_char (string-to-char start))(base_char (string-to-char "a")))
+    (setq counter (counter-factory -1 inc))
+    (fset 'tmp_increase
+	  (lambda () (interactive)
+	    (insert-char (+
+			 (% (+ (funcall counter)(- start_char base_char)) 26) base_char))))
+    (mc/for-each-cursor-ordered
+     (mc/execute-command-for-fake-cursor
+      'tmp_increase
+      cursor))))
 
 (defun my/start-insert-ymd(ymd inc)
   (interactive
@@ -913,12 +922,36 @@
     'tmp_kill
     cursor))
   (message "%s" "multi copy")
-  (kill-new (funcall stored))
-  )
+  (kill-new (funcall stored)))
 
 ;; multiple insert s
 (global-set-key (kbd "C-c i n") 'my/mc/insert-numbers)
 (global-set-key (kbd "C-c i y") 'my/start-insert-ymd)
+(global-set-key (kbd "C-M-SPC") 'mc/mark-all-dwim-or-mark-sexp)
+(global-set-key (kbd "C-x r t") 'mc/edit-lines-or-string-rectangle)
+(global-set-key (kbd "C-c c") 'mc/edit-lines)
+
+(defun start-multiple-cursors(num start)
+  (interactive "NCursors num > \nsStart word > ")
+  (set-mark-command nil)
+  (let ((prepos (current-column)) (loop (- num 1)))
+    (message "prepos : %s" prepos)
+    (dotimes (i loop)
+      (insert start )
+      (if (equal (line-number-at-pos)  (count-lines (window-start) (window-end)))
+	  (insert "\n") (progn (forward-line) (forward-char prepos))
+	  )
+      )
+    (insert start )
+    (end-of-line)
+    (exchange-point-and-mark)
+    (mc/edit-ends-of-lines)
+    )
+  )
+
+(global-set-key (kbd "C-c s") 'start-multiple-cursors)
+
+;;; multiple cursor end
 
 ;; eww
 ;;; my scroll key bindings
@@ -967,9 +1000,8 @@
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 ;; flycheck popup
-(eval-after-load 'flycheck
-  '(custom-set-variables
-   '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
+(with-eval-after-load 'flycheck
+  (flycheck-pos-tip-mode))
 
 ;; rainbow mode ;色指定を実際に見せてくれるrgba形式も対応してほすぃ
 (require 'rainbow-mode)
@@ -1052,16 +1084,16 @@
 			   (setq indent-tabs-mode nil)))
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . js2-mode))
 
-;;; tern mode
-(eval-after-load 'tern
-   '(progn
-      (require 'tern-auto-complete)
-      (tern-ac-setup)))
+;; ;;; tern mode
+;; (eval-after-load 'tern
+;;    '(progn
+;;       (require 'tern-company)
+;;       (tern-ac-setup)))
 
-;;; direx
 (require 'popwin)
 (setq display-buffer-function 'popwin:display-buffer)
 
+;;; direx
 (require 'direx)
 (setq direx:leaf-icon "  "
       direx:open-icon "- "
@@ -1070,48 +1102,43 @@
       popwin:special-display-config)
 (global-set-key (kbd "C-x j") 'direx:jump-to-directory-other-window)
 
-;;; auto-complete start
-(require 'auto-complete-config)
-(ac-config-default)
-(global-auto-complete-mode t)
-(add-to-list 'ac-modes 'emacs-lisp-mode)
-(add-to-list 'ac-modes 'web-mode)
-(add-to-list 'ac-modes 'markdown-mode)
-(add-to-list 'ac-modes 'powershell-mode)
-(add-to-list 'ac-modes 'org-mode)
-(setq ac-auto-start 3)
-(setq ac-dwim t)
+;; ;;; auto-complete start
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+;; (global-auto-complete-mode t)
+;; (add-to-list 'ac-modes 'emacs-lisp-mode)
+;; (add-to-list 'ac-modes 'web-mode)
+;; (add-to-list 'ac-modes 'markdown-mode)
+;; (add-to-list 'ac-modes 'powershell-mode)
+;; (add-to-list 'ac-modes 'org-mode)
+;; (setq ac-auto-start 3)
+;; (setq ac-dwim t)
 
-(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
-(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)
-(define-key ac-completing-map (kbd "C-f") 'ac-expand)
-(define-key ac-completing-map (kbd "C-n") 'ac-next)
-(define-key ac-completing-map (kbd "C-p") 'ac-previous)
-(setq-default ac-sources '(ac-source-yasnippet
-			   ac-source-abbrev
-			   ac-source-dictionary
-			   ac-source-filename
-			   ac-source-words-in-same-mode-buffers))
-(global-set-key (kbd "C-:") 'auto-complete)
-;;; auto-complete end
+;; (define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
+;; (define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)
+;; (define-key ac-completing-map (kbd "C-f") 'ac-expand)
+;; (define-key ac-completing-map (kbd "C-n") 'ac-next)
+;; (define-key ac-completing-map (kbd "C-p") 'ac-previous)
+;; (setq-default ac-sources '(ac-source-yasnippet
+;; 			   ac-source-abbrev
+;; 			   ac-source-dictionary
+;; 			   ac-source-filename
+;; 			   ac-source-words-in-same-mode-buffers))
+;; (global-set-key (kbd "C-:") 'auto-complete)
+;; ;;; auto-complete end
 
 ;;; company start
 (require 'company)
 ;; C-n, C-pで補完候補を次/前の候補を選択
-(define-key company-active-map (kbd "C-n") 'company-select-next)
-(define-key company-active-map (kbd "C-p") 'company-select-previous)
+(define-key company-active-map (kbd "M-n") nil)
+(define-key company-active-map (kbd "M-p") nil)
 (define-key company-search-map (kbd "C-n") 'company-select-next)
 (define-key company-search-map (kbd "C-p") 'company-select-previous)
+(setq company-mimimum-prefix-length 1)
+(setq company-selection-wrap-around t)
+(define-key company-mode-map (kbd "C-:") 'company-complete)
 
-;; TABで候補を設定
-(define-key company-active-map (kbd "C-i") 'company-complete-selection)
 ;;; company end
-
-;;; File 関連づけ Start
-(setq auto-mode-alist (append '(("\\.java$" . java-mode)
-				("\\.txt$" . text-mode) ("\\.log$" . text-mode)
-				("\\.sql$" . sql-mode) ) auto-mode-alist))
-;;; File 関連づけ End
 
 ;;; persp mode Setting Start
 (setq persp-keymap-prefix (kbd "C-c p")) ;prefix
@@ -1209,61 +1236,13 @@
           (isearch-repeat-forward)))
     ad-do-it))
 
-;;; linuxではtrampと競合する
-;; ;; shell-quote-argumentの問題回避
-;; (defvar quote-argument-for-windows-p t "enables `shell-quote-argument' workaround for windows.")
-;; (defadvice shell-quote-argument (around shell-quote-argument-for-win activate)
-;;  "workaround for windows."
-;;  (if quote-argument-for-windows-p
-;;  (let ((argument (ad-get-arg 0)))
-;; 	(setq argument (replace-regexp-in-string "\\\\" "\\\\" argument nil t))
-;; 	(setq argument (replace-regexp-in-string "'" "'\\''" argument nil t))
-;; 	(setq ad-return-value argument))
-;;  ad-do-it))
-
-;; (require 'eclim)
-;; (require 'eclimd)
-;; (setq eclimd-default-workspace "~/workspace")
-;; ;; java-mode で有効
-;; (add-hook 'java-mode-hook 'eclim-mode)
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(column-number-mode t)
-;;  '(display-time-mode t)
-;;  '(eclim-eclipse-dirs (quote ("/home/elseorand/eclipses/eclipse4.5/")))
-;;  '(eclim-executable "/home/elseorand/eclipses/eclipse4.5/eclim")
-;;  '(eclimd-wait-for-process nil)
-;;  '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
-;;  '(package-selected-packages
-;;    (quote
-;;     (win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
-;;  '(rtags-use-helm t)
-;;  '(show-paren-mode t)
-;;  '(tool-bar-mode nil))
-
-;; add the emacs-eclim source
-;;(require 'ac-emacs-eclim)
-;;(ac-emacs-eclim-config)
-;; エラー箇所にカーソルを当てるとエコーエリアに詳細を表示する
-;;(setq help-at-pt-display-when-idle t)
-;;(setq help-at-pt-timer-delay 0.1)
-;;(help-at-pt-set-timer)
-;; debug
-;(eclim-toggle-print-debug-messages)
-;;
-;;(define-key eclim-mode-map (kbd "C-c C-e ;") 'eclim-run-class)
-
-
 ;;; helm-ag
 (require 'helm-config)
 (require 'helm-files)
 (require 'helm-ag)
 ;; helm-ag
 ;;; (setq helm-ag-base-command "pt --nocolor --nogroup")
-(setq helm-ag-base-command "rg --no-heading -S")
+(setq helm-ag-base-command "rg --no-heading -S - e")
 ;;; 現在のシンボルをデフォルトのクエリにする
 (setq helm-ag-insert-at-point 'symbol)
 ;;; C-M-gはちょうどあいてる
@@ -1360,6 +1339,11 @@
   (setq imenus-exit-status 'helm-multi-swoop)
   (imenus-exit-minibuffer))
 
+;;; hiwin
+(require 'hiwin)
+(hiwin-activate)
+(set-face-background 'hiwin-face "#ffdbb7")
+
 ;;; electric-operator
 (require 'electric-operator)
 (electric-operator-add-rules-for-mode
@@ -1399,16 +1383,14 @@
 ;;(sp-pair "<?" "?>")
 
 ;; (require 'tramp)
-(setq tramp-default-method "ssh")
-(add-to-list 'tramp-default-proxies-alist
-             '(nil "\\`root\\'" "/ssh:%h:"))
-(add-to-list 'tramp-default-proxies-alist
-             '("localhost" nil nil))
-(add-to-list 'tramp-default-proxies-alist
-             '((regexp-quote (system-name)) nil nil))
+(setq tramp-default-method "scp")
+;; (add-to-list 'tramp-default-proxies-alist
+;;              '(nil "\\`root\\'" "/ssh:%h:"))
+;; (add-to-list 'tramp-default-proxies-alist
+;;              '("localhost" nil nil))
+;; (add-to-list 'tramp-default-proxies-alist
+;;              '((regexp-quote (system-name)) nil nil))
 
-
-(global-set-key (kbd "M-w") 'easy-kill)
 
 ;; tab jump mode
 (setq yas-fallback-behavior '(apply tab-jump-out 1))
@@ -1468,8 +1450,8 @@
 		      ;; make these keys behave like normal browser
 		      (define-key xwidget-webkit-mode-map [mouse-4] 'xwidget-webkit-scroll-down)
 		      (define-key xwidget-webkit-mode-map [mouse-5] 'xwidget-webkit-scroll-up)
-		      (define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidget-webkit-scroll-down)
-		      (define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidget-webkit-scroll-up)
+		      (define-key xwidget-webkit-mode-map (kbd "C-n") 'xwidget-webkit-scroll-down)
+		      (define-key xwidget-webkit-mode-map (kbd "C-p") 'xwidget-webkit-scroll-up)
 		      (define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidget-webkit-copy-selection-as-kill)
 		      (define-key xwidget-webkit-mode-map (kbd "C-/") 'xwidget-webkit-back)
 		      (define-key xwidget-webkit-mode-map (kbd "C-l") 'xwidget-webkit-reload)
@@ -1541,8 +1523,6 @@ This can be used with the `org-open-at-point-functions' hook."
 
 (require 'page-ext)
 
-;; 行末の空白を削除
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; paren close delimiter
 (global-set-key (kbd "M-]") 'paren-completer-add-single-delimiter)
@@ -1555,7 +1535,8 @@ This can be used with the `org-open-at-point-functions' hook."
 
 ;;; 日本語環境設定
 (set-language-environment "Japanese")
-(prefer-coding-system 'utf-8) ;;powershellで文字化けが発生してしまう･･･
+(prefer-coding-system 'utf-8-unix)
+(set-default-coding-systems 'utf-8-unix)
 
 (put 'narrow-to-region 'disabled nil)
 (provide '.emacs)
@@ -1574,10 +1555,9 @@ This can be used with the `org-open-at-point-functions' hook."
  '(eclim-eclipse-dirs (quote ("/home/elseorand/eclipses/eclipse4.5/")))
  '(eclim-executable "/home/elseorand/eclipses/eclipse4.5/eclim")
  '(eclimd-wait-for-process nil)
- '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
  '(package-selected-packages
    (quote
-    (paren-completer helm-tramp zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree tern-auto-complete swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell ensime emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php ac-emacs-eclim)))
+    (flycheck-pos-tip company-lsp lsp-mode hiwin async-await xwidgete paren-completer helm-tramp zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill direx dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
