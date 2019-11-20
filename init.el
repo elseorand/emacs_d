@@ -1093,42 +1093,35 @@
 ;;       (require 'tern-company)
 ;;       (tern-ac-setup)))
 
-(require 'popwin)
-(setq display-buffer-function 'popwin:display-buffer)
+;; (require 'popwin)
+;; ;; helm bufferをpopupする
+;; (setq helm-display-function #'display-buffer)
+;; (when (require 'popwin)
+;;   (setq display-buffer-function 'popwin:display-buffer)
+;;   (setq popwin:special-display-config
+;;     '(("*complitation*" :noselect t)
+;;       ("helm" :regexp t :height 0.4))))
 
-;; ;;; direx
-;; (require 'direx)
-;; (setq direx:leaf-icon "  "
-;;       direx:open-icon "- "
-;;       direx:closed-icon "+ ")
-;; (push '(direx:direx-mode :position left :width 40 :dedicated t)
-;;       popwin:special-display-config)
-;; (global-set-key (kbd "C-x j") 'direx:jump-to-directory-other-window)
+(require 'shackle)
+(setq shackle-rules
+      '(;; *compilation*は下部に2割の大きさで表示
+        (compilation-mode :align below :ratio 0.2)
+        ;; ヘルプバッファは右側に表示
+        ("*Help*" :align right)
+        ;; 補完バッファは下部に3割の大きさで表示
+        ("*Completions*" :align below :ratio 0.3)
+        ;; M-x helm-miniは下部に7割の大きさで表示
+        ("*helm mini*" :align below :ratio 0.7)
+        ;; 他のhelmコマンドは右側に表示 (バッファ名の正規表現マッチ)
+        ("\*helm" :regexp t :align below)
+        ))
+(shackle-mode 1)
+(setq shackle-lighter "")
 
-;; ;;; auto-complete start
-;; (require 'auto-complete-config)
-;; (ac-config-default)
-;; (global-auto-complete-mode t)
-;; (add-to-list 'ac-modes 'emacs-lisp-mode)
-;; (add-to-list 'ac-modes 'web-mode)
-;; (add-to-list 'ac-modes 'markdown-mode)
-;; (add-to-list 'ac-modes 'powershell-mode)
-;; (add-to-list 'ac-modes 'org-mode)
-;; (setq ac-auto-start 3)
-;; (setq ac-dwim t)
-
-;; (define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
-;; (define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)
-;; (define-key ac-completing-map (kbd "C-f") 'ac-expand)
-;; (define-key ac-completing-map (kbd "C-n") 'ac-next)
-;; (define-key ac-completing-map (kbd "C-p") 'ac-previous)
-;; (setq-default ac-sources '(ac-source-yasnippet
-;; 			   ac-source-abbrev
-;; 			   ac-source-dictionary
-;; 			   ac-source-filename
-;; 			   ac-source-words-in-same-mode-buffers))
-;; (global-set-key (kbd "C-:") 'auto-complete)
-;; ;;; auto-complete end
+;;; C-zで直前のウィンドウ構成に戻す
+(winner-mode 1)
+(global-set-key (kbd "C-c w b") 'winner-undo)
+(global-set-key (kbd "C-c w f") 'winner-redo)
 
 ;;; company start
 (require 'company)
@@ -1419,9 +1412,6 @@
                 (local-set-key (kbd "M-;") 'rtags-find-symbol)
                 (local-set-key (kbd "M-@") 'rtags-find-references)
                 (local-set-key (kbd "M-,") 'rtags-location-stack-back)))))
-
-
-
 ;; C++ end
 
 (setq load-path
@@ -1557,7 +1547,7 @@ This can be used with the `org-open-at-point-functions' hook."
  '(eclimd-wait-for-process nil)
  '(package-selected-packages
    (quote
-    (flycheck-pos-tip company-lsp lsp-mode hiwin async-await xwidgete paren-completer helm-tramp zoom-window dired-launch mpv mozc win-switch web-mode volatile-highlights visual-regexp use-package undohist undo-tree swiper smartparens rtags region-bindings-mode rainbow-mode rainbow-delimiters projectile powershell popwin phi-search-migemo phi-search-mc phi-search-dired persp-mode org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
+    (shackle meghanada flycheck-pos-tip company-lsp lsp-mode hiwin async-await helm-tramp dired-launch use-package undo-tree swiper projectile powershell org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
