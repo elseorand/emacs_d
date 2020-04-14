@@ -1,4 +1,5 @@
 ;; -*- mode: emacs-lisp; lexical-binding: t ; coding: utf-8 -*-
+(setq lexical-binding t)
 
 ;;; Commentary: enabled lexical-binding. Please pay attention to using setq.
 
@@ -12,8 +13,6 @@
 (package-initialize)
 (require 'use-package)
 ;;; Packages Setting End
-
-(setq lexical-binding t)
 
 ;;; GC
 (setq gc-cons-threshold (* 512 1024 1024))
@@ -77,6 +76,12 @@
 		    '(left . 0)
 		    )
 	      default-frame-alist))
+
+;; active/in-active mode-line color
+(set-face-foreground 'mode-line "gray20")
+(set-face-background 'mode-line "pink")
+(set-face-foreground 'mode-line-inactive "black")
+(set-face-background 'mode-line-inactive "gray85")
 
 ;;; linum-mode
 (global-linum-mode t)
@@ -156,6 +161,20 @@
      (lambda (s2)(upcase (substring s2 1)))
      (concat (if capitalize "_" "") s))))
 
+(defun capitalze-first-char (&optional string)
+  "Capitalize only the first char of the input"
+  (when (and string (> (length string) 0))
+    (let ((first-char (substring string 0 1))
+          (rest-str (substring string 1)))
+      (concat (capitalize first-char) rest-str))))
+
+(defun downcase-first-char (&optional string)
+  "down fitst char"
+  (when (and string (> length string) 0)
+    (let ((first-char (substring string 0 1))
+          (rest-str (substring string 1)))
+      (concat (downcase first-char) rest-str))))
+
 (defun space-to-camel (s)
   ""
   (snake-to-camel (replace-regexp-in-string " " "_" s)))
@@ -198,6 +217,13 @@
             (downcase-region start (1+ start)))
         (replace-regexp "\\([A-Z]\\)" "_\\1" nil (1+ start) end)
         (downcase-region start end)))))
+
+(defun dateAdd(ymd add &optional pad)
+  (interactive)
+  (format-time-string
+   (or pad "%Y-%m-%d")
+   (time-ad (date-to-time (concat ymd "T00:00:00"))
+            (days-to-time add))))
 
 (defun my/filter (condp lst)
   (delq nil
@@ -260,6 +286,10 @@
   (interactive)
   (inset (format-time-string "%Y-%m-%d" (current-time))))
 (global-set-key (kbd "C-c d") 'insert-current-time)
+
+(defun string-to-number-1(s)
+  ""
+  (- (string-to-number s) 1))
 
 ;; repeat yank
 (defun repeat-yank (num)
@@ -406,8 +436,6 @@
 ;; emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.el$" . emacs-lisp-mode))
 
-;; key-bind_s Settings Start
-;; Goto Line
 (global-unset-key (kbd "C-x C-c"))
 ;; key-bind_s Settings End
 
@@ -602,28 +630,28 @@
 
 ;; markdown-mode Settings End
 
-;; Scala
-(setq use-package-always-defer t
-      use-package-always-ensure t
-      backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+;; Scala deprecated
+;; (setq use-package-always-defer t
+;;       use-package-always-ensure t
+;;       backup-directory-alist `((".*" . ,temporary-file-directory))
+;;       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
-;; Enable scala-mode and sbt-mode
-(use-package scala-mode
-  :mode "\\.s\\(cala\\|bt\\)$")
+;; ;; Enable scala-mode and sbt-mode
+;; (use-package scala-mode
+;;   :mode "\\.s\\(cala\\|bt\\)$")
 
-(use-package sbt-mode
-  :commands sbt-start sbt-command
-  :config
-  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
-  ;; allows using SPACE when in the minibuffer
-  (substitute-key-definition
-   'minibuffer-complete-word
-   'self-insert-command
-   minibuffer-local-completion-map)
-   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
-   (setq sbt:program-options '("-Dsbt.supershell=false"))
-)
+;; (use-package sbt-mode
+;;   :commands sbt-start sbt-command
+;;   :config
+;;   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+;;   ;; allows using SPACE when in the minibuffer
+;;   (substitute-key-definition
+;;    'minibuffer-complete-word
+;;    'self-insert-command
+;;    minibuffer-local-completion-map)
+;;    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+;;    (setq sbt:program-options '("-Dsbt.supershell=false"))
+;; )
 
 ;; Enable nice rendering of diagnostics like compile errors.
 (use-package flycheck
@@ -683,9 +711,9 @@
 (when (require 'undo-tree nil t)
    (global-undo-tree-mode))
 ;; point-undo
-(when (require 'point-undo nil t)
-  (global-set-key (kbd "M-[") 'point-undo)
-  (global-set-key (kbd "M-]") 'point-redo))
+;; (when (require 'point-undo nil t)
+;;   (global-set-key (kbd "M-[") 'point-undo)
+;;   (global-set-key (kbd "M-]") 'point-redo))
 
 
 ;;; Org Settings Start
@@ -846,6 +874,7 @@
 (define-key region-bindings-mode-map "U" 'mc/unmark-previous-like-this)
 (define-key region-bindings-mode-map "j" 'mc/skip-to-next-like-this)
 (define-key region-bindings-mode-map "S" 'mc/skip-to-previous-like-this)
+(define-key region-bindings-mode-map "c" 'my/mc/insert-chars)
 (define-key region-bindings-mode-map "i" 'my/mc/insert-numbers)
 (define-key region-bindings-mode-map "y" 'my/start-insert-ymd)
 (define-key region-bindings-mode-map "s" 'phi-search-migemo)
@@ -927,13 +956,6 @@
   (message "%s" "multi copy")
   (kill-new (funcall stored)))
 
-;; multiple insert s
-(global-set-key (kbd "C-c i n") 'my/mc/insert-numbers)
-(global-set-key (kbd "C-c i y") 'my/start-insert-ymd)
-(global-set-key (kbd "C-M-SPC") 'mc/mark-all-dwim-or-mark-sexp)
-(global-set-key (kbd "C-x r t") 'mc/edit-lines-or-string-rectangle)
-(global-set-key (kbd "C-c c") 'mc/edit-lines)
-
 (defun start-multiple-cursors(num start)
   (interactive "NCursors num > \nsStart word > ")
   (set-mark-command nil)
@@ -952,6 +974,16 @@
     )
   )
 
+
+;; multiple insert s
+(global-set-key (kbd "C-c i n") 'my/mc/insert-numbers)
+(global-set-key (kbd "C-c i y") 'my/start-insert-ymd)
+(global-set-key (kbd "C-c i c") 'my/mc/insert-chars)
+(global-set-key (kbd "C-M-SPC") 'mc/mark-all-dwim-or-mark-sexp)
+(global-set-key (kbd "C-x r t") 'mc/edit-lines-or-string-rectangle)
+(global-set-key (kbd "C-c c") 'mc/edit-lines)
+(define-key mc/keymap (kbd "C-:") 'nil)
+(define-key mc/keymap (kbd "C-,") 'mc/repeat-command)
 (global-set-key (kbd "C-c s") 'start-multiple-cursors)
 
 ;;; multiple cursor end
@@ -1130,6 +1162,9 @@
 (define-key company-active-map (kbd "M-p") nil)
 (define-key company-search-map (kbd "C-n") 'company-select-next)
 (define-key company-search-map (kbd "C-p") 'company-select-previous)
+(define-key company-search-map (kbd "C-h") 'nil)
+(define-key company-search-map (kbd "C-h") 'company-complete-common-or-cycle)
+(define-key company-search-map (kbd "M-d") 'company-show-doc-buffer)
 (setq company-mimimum-prefix-length 1)
 (setq company-selection-wrap-around t)
 (define-key company-mode-map (kbd "C-:") 'company-complete)
@@ -1238,7 +1273,7 @@
 (require 'helm-ag)
 ;; helm-ag
 ;;; (setq helm-ag-base-command "pt --nocolor --nogroup")
-(setq helm-ag-base-command "rg --no-heading -S - e")
+(setq helm-ag-base-command "rg --no-heading -S -e")
 ;;; 現在のシンボルをデフォルトのクエリにする
 (setq helm-ag-insert-at-point 'symbol)
 ;;; C-M-gはちょうどあいてる
@@ -1335,10 +1370,10 @@
   (setq imenus-exit-status 'helm-multi-swoop)
   (imenus-exit-minibuffer))
 
-;;; hiwin
-(require 'hiwin)
-(hiwin-activate)
-(set-face-background 'hiwin-face "#ffdbb7")
+;; ;;; hiwin
+;; (require 'hiwin)
+;; (hiwin-activate)
+;; (set-face-background 'hiwin-face "#ffdbb7")
 
 ;;; electric-operator
 (require 'electric-operator)
@@ -1380,6 +1415,7 @@
 
 ;; (require 'tramp)
 (setq tramp-default-method "scp")
+(setq ange-ftp-try-passive-mode t)
 ;; (add-to-list 'tramp-default-proxies-alist
 ;;              '(nil "\\`root\\'" "/ssh:%h:"))
 ;; (add-to-list 'tramp-default-proxies-alist
@@ -1403,6 +1439,9 @@
   '(progn
      (when (locate-library "flycheck-irony")
        (flycheck-irony-setup))))
+
+;; flyspell
+(setq flyspell-issue-message-flag nil)
 
 (when (require 'rtags nil 'noerror)
   (add-hook 'c-mode-common-hook
@@ -1547,7 +1586,7 @@ This can be used with the `org-open-at-point-functions' hook."
  '(eclimd-wait-for-process nil)
  '(package-selected-packages
    (quote
-    (shackle meghanada flycheck-pos-tip company-lsp lsp-mode hiwin async-await helm-tramp dired-launch use-package undo-tree swiper projectile powershell org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
+    (flyspell-correct flyspell-correct-helm tramp shackle meghanada flycheck-pos-tip company-lsp lsp-mode hiwin async-await helm-tramp dired-launch use-package undo-tree swiper projectile powershell org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
