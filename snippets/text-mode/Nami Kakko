@@ -1,7 +1,7 @@
 # -*- mode: snippet; require-final-newline: nil -*-
 # name: Nami Kakko
 # key: n
-# binding: direct-keybinding
+# binding: C-c y n
 # --
 {$0
 }

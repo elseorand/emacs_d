@@ -6,7 +6,8 @@
 ;;; Packages Setting Start
 (require 'package)
 ;; MELPAを追加
-(add-to-list 'package-archives '("melpa" . "https://melpa.milkbox.net/packages/"))
+;; (add-to-list 'package-archives '("melpa" . "https://melpa.milkbox.net/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 ;; Marmaladeを追加
 ;; (add-to-list 'package-archives  '("marmalade" . "https://marmalade-repo.org/packages/"))
 ;; 初期化
@@ -835,7 +836,6 @@
 (add-hook 'calendar-today-visible-hook 'calendar-mark-today)
 
 (require 'org-habit)
-
 (defun my-org-reload ()
   (interactive)
   (switch-to-buffer "agenda.org")
@@ -851,13 +851,15 @@
       (let ((w32-start-process-show-window t))
 	(start-process (concat browse-url-msie-program url)
 		       nil browse-url-msie-program url))))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '(
-   (scala . t)
-   ))
+(message "854")
+;;; TODO ensime と連動している
+;; (org-babel-do-load-languages
+;;  'org-babel-load-languages
+;;  '(
+;;    (scala . t)
+;;    ))
 ;;; Org Settings End
+(message "860")
 
 ;; Region
 (require 'region-bindings-mode)
@@ -1052,7 +1054,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ricty" :foundry "unknown" :slant normal :weight normal :height 135 :width normal))))
+ '(default ((t (:family "Ricty" :foundry "unknown" :slant normal :weight normal :height 120 :width normal))))
  '(rainbow-delimiters-depth-1-face ((t (:foreground "#000000" :weight bold))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "#FF0010" :weight bold))))
  '(rainbow-delimiters-depth-3-face ((t (:foreground "#FF8D10" :weight bold))))
@@ -1560,7 +1562,7 @@ This can be used with the `org-open-at-point-functions' hook."
 (global-set-key (kbd "M-]") 'paren-completer-add-single-delimiter)
 
 ;; font
-(add-to-list 'default-frame-alist '(font . "ricty-13.5"))
+(add-to-list 'default-frame-alist '(font . "ricty-12.0"))
 
 ;; emacsclientを使えるようにする
 (server-start)
