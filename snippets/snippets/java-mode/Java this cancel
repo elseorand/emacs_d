@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java this cancel
+# key: thg
+# binding: direct-keybinding
+# --
+$0`(delete-backward-char 2)`

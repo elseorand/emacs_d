@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java true
+# key: tr
+# binding: direct-keybinding
+# --
+$0true

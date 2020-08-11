@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: scala guard
+# key: guard
+# --
+// guard
+if($0) return $1

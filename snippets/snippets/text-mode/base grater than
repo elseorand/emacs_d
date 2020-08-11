@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: base grater than
+# key: gt
+# --
+< $0

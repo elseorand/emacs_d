@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: not equals
+# key: ne
+# --
+notEquals

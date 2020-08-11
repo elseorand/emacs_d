@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: SQL update
+# key: up
+# binding: direct-keybinding
+# --
+update $0 set $1 where 1=0 

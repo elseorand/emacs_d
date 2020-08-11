@@ -6,7 +6,7 @@
 ;;; Packages Setting Start
 (require 'package)
 ;; MELPAを追加
-;; (add-to-list 'package-archives '("melpa" . "https://melpa.milkbox.net/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 ;; Marmaladeを追加
 ;; (add-to-list 'package-archives  '("marmalade" . "https://marmalade-repo.org/packages/"))
@@ -408,8 +408,8 @@
 ;;   (interactive)
 ;;   (message "%s" (dired-current-directory))
 ;;   (explorer (dired-current-directory)))
-(require 'dired+)
-(diredp-toggle-find-file-reuse-dir 1)
+;; (require 'dired+)
+;; (diredp-toggle-find-file-reuse-dir 1)
 ;;; dired のkey割り当て追加
 (add-hook 'dired-mode-hook
  (lambda ()

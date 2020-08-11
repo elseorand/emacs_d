@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java computeIfAbsent
+# key: ca
+# binding: direct-keybinding
+# --
+computeIfAbsent(key, k -> )$0

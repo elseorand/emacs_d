@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: base foreach
+# key: fe
+# --
+foreach $0

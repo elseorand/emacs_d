@@ -1,0 +1,15 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Getter Setter
+# key: gs
+# binding: C-c g s
+# expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+${1:$$(yas-choose-value '("private" "" "protected"))} $2 `yas-selected-text`;
+$0
+public $2 get`(capitalize (yas-selected-text))`(){
+       return this.`yas-selected-text`;
+}
+
+public void set`(capitalize (yas-selected-text))`(final $2 `yas-selected-text`){
+       this.`yas-selected-text` = `yas-selected-text`;
+}

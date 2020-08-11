@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: base multi equals
+# key: =
+# --
+=$1=$0

@@ -1,0 +1,21 @@
+# key: ws
+# name: ES websocket
+# --
+var webConn = new WebSocket('ws://$0');
+webConn.onopen = function(event) {
+
+};
+
+webConn.onclose = function(event) {
+
+};
+
+webConn.onmessage = function(event) {
+  if(event && event.data) {
+
+  }
+};
+
+webConn.onerror = function(event) {
+
+};

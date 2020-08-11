@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: jQuery each
+# key: je
+# binding: direct-keybinding
+# --
+$1.each(${2:arr,}function(i, obj){$0});

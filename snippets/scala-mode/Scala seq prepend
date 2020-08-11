@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Scala seq prepend
+# key: spp
+# --
++: $0

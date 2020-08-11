@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Scala addAll
+# key: addall
+# --
+++= $0

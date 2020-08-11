@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Org export
+# key: export
+# --
+#+BEGIN_EXPORT $1
+$0
+#+END_EXPORT $1

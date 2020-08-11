@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Scala return
+# key: re
+# --
+return $0

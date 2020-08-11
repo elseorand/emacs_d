@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java filter
+# key: ft
+# binding: direct-keybinding
+# --
+.filter($1 -> $0$1)

@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Supplier
+# key: sp
+# binding: direct-keybinding
+# --
+Supplier<$0>

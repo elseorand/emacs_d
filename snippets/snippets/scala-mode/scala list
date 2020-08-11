@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: scala list
+# key: List
+# --
+List$0[]()

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: ls
+# key: ls
+# binding: C-c y l s
+# --
+ls -alt $0./

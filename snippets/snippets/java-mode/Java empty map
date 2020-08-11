@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java empty map
+# key: em
+# binding: direct-keybinding
+# --
+Collections.emptyMap();$0

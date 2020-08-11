@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: SQL from
+# key: f
+# binding: direct-keybinding
+# --
+from $0

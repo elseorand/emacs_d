@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Consumer
+# key: cs
+# binding: direct-keybinding
+# --
+Consumer<$0>

@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Javascript Object
+# key: object
+# binding: direct-keybinding
+# --
+$0{}

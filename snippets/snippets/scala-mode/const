@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: const
+# key: const
+# binding: direct-keybinding
+# --
+val $1 = $0

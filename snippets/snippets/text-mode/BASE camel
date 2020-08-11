@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: BASE camel
+# key: ca
+# --
+${1:$$(space-to-camel yas-text)}

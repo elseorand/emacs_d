@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: for in
+# key: fi
+# binding: direct-keybinding
+# expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+for(var ${2:key} in $1) if($1.hasOwnProperty($2)){$0};

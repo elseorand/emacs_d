@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: jQuery ID
+# key: ji
+# binding: direct-keybinding
+# expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+var el_$1 = $('#$1$0');

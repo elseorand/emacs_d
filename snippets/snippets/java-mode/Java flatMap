@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java flatMap
+# key: fm
+# binding: direct-keybinding
+# --
+.flatMap($1 -> 
+    $0$1.stream()
+)

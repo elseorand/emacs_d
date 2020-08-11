@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Function IF
+# key: fn
+# binding: direct-keybinding
+# --
+$0 Function<$1> ${2:func = () -> ;}

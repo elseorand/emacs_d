@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java empty list
+# key: el
+# binding: direct-keybinding
+# --
+Collections.emptyList();$0

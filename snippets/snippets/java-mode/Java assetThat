@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java assetThat
+# key: ast
+# binding: direct-keybinding
+# --
+assertThat($0$1, is($2));

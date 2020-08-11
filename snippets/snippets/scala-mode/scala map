@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: scala map
+# key: map
+# --
+map { $0
+}

@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Collection
+# key: col
+# binding: direct-keybinding
+# --
+Collection$0

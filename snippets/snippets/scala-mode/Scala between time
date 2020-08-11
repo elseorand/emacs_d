@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Scala between time
+# key: btt
+# --
+ChronoUnit.SECONDS.between($1, $0)

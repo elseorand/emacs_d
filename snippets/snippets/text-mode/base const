@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: base const
+# key: c
+# binding: direct-keybinding
+# --
+const$0

@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java Collectors
+# key: ctl
+# binding: direct-keybinding
+# --
+.collect(Collectors.$0toList())

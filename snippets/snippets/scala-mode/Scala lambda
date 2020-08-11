@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Scala lambda
+# key: lambda
+# binding: direct-keybinding
+# expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+${1:($2: $3)} => $4$0`(delete-char 1)`

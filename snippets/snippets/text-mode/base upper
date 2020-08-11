@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: base upper
+# key: up
+# binding: direct-keybinding
+# --
+${1:$$(upcase yas-text)}

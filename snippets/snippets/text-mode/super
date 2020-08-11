@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: super
+# key: s
+# binding: direct-keybinding
+# expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+super$0

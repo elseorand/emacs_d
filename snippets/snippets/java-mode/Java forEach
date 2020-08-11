@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Java forEach
+# key: fe
+# binding: direct-keybinding
+# --
+forEach($1 -> {
+   $0$1; 
+});

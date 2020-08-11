@@ -1,0 +1,6 @@
+./configure --with-x-toolkit=gtk3 \
+--without-toolkit-scroll-bars  \
+--without-compress-install --without-pop \
+--without-selinux --with-cairo --with-jansson --with-json \
+--without-makeinfo --with-modules --with-xwidgets && time make
+$ sudo make install

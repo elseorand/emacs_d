@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Double Quotation
+# key: d
+# binding: C-c y d
+#expand-env: ((yas/indent-line 'fixed)(yas/wrap-around-region 'nil))
+# --
+$2"$1"$0
