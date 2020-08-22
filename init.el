@@ -13,6 +13,11 @@
 ;; 初期化
 (package-initialize)
 (require 'use-package)
+
+(setq use-package-always-defer t
+      use-package-always-ensure t
+      backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 ;;; Packages Setting End
 
 ;;; GC
@@ -511,7 +516,7 @@
         (16 'helm-swoop-nomigemo)))))
 (global-set-key (kbd "C-s") 'isearch-forward-or-helm-swoop)
 (setq helm-swoop-move-to-line-cycle t)
-
+(message "5")
 (cl-defun helm-swoop-nomigemo (&key $query ($multiline current-prefix-arg))
   "シンボル検索用Migemo無効版helm-swoop"
   (interactive)
@@ -631,42 +636,55 @@
 
 ;; markdown-mode Settings End
 
-;; Scala deprecated
-;; (setq use-package-always-defer t
-;;       use-package-always-ensure t
-;;       backup-directory-alist `((".*" . ,temporary-file-directory))
-;;       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
-;; ;; Enable scala-mode and sbt-mode
-;; (use-package scala-mode
-;;   :mode "\\.s\\(cala\\|bt\\)$")
-
-;; (use-package sbt-mode
-;;   :commands sbt-start sbt-command
-;;   :config
-;;   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
-;;   ;; allows using SPACE when in the minibuffer
-;;   (substitute-key-definition
-;;    'minibuffer-complete-word
-;;    'self-insert-command
-;;    minibuffer-local-completion-map)
-;;    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
-;;    (setq sbt:program-options '("-Dsbt.supershell=false"))
-;; )
+(use-package scala-mode
+  :mode "\\.s\\(cala\\|bt\\)$")
 
 ;; Enable nice rendering of diagnostics like compile errors.
 (use-package flycheck
   :init (global-flycheck-mode))
+
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+   (setq sbt:program-options '("-Dsbt.supershell=false"))
 
 (use-package lsp-mode
   ;; Optional - enable lsp-mode automatically in scala files
   :hook (scala-mode . lsp)
   :config (setq lsp-prefer-flymake nil))
 
+(use-package lsp-metals)
+
 (use-package lsp-ui)
 
 ;; Add company-lsp backend for metals
 (use-package company-lsp)
+
+;; Use the Debug Adapter Protocol for running tests and debugging
+(use-package posframe
+  ;; Posframe is a pop-up tool that must be manually installed for dap-mode
+  )
+(use-package dap-mode
+  :hook
+  (lsp-mode . dap-mode)
+  (lsp-mode . dap-ui-mode)
+  )
+)
+
+;; Use the Tree View Protocol for viewing the project structure and triggering compilation
+(use-package lsp-treemacs
+  :config
+  (lsp-metals-treeview-enable t)
+  (setq lsp-metals-treeview-show-when-views-received t)
+  )
 
 ;; color-moccur
 ;;(when (require 'color-moccur nil t)
@@ -851,15 +869,6 @@
       (let ((w32-start-process-show-window t))
 	(start-process (concat browse-url-msie-program url)
 		       nil browse-url-msie-program url))))
-(message "854")
-;;; TODO ensime と連動している
-;; (org-babel-do-load-languages
-;;  'org-babel-load-languages
-;;  '(
-;;    (scala . t)
-;;    ))
-;;; Org Settings End
-(message "860")
 
 ;; Region
 (require 'region-bindings-mode)
@@ -1071,7 +1080,7 @@
         :foreground "#000000"
         :inherit 'error
         :strike-through t)
-
+(message "10")
 ;;; Web-mode Settings Start
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.phtml$'" . web-mode))
@@ -1583,12 +1592,11 @@ This can be used with the `org-open-at-point-functions' hook."
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(display-time-mode t)
- '(eclim-eclipse-dirs (quote ("/home/elseorand/eclipses/eclipse4.5/")))
+ '(eclim-eclipse-dirs '("/home/elseorand/eclipses/eclipse4.5/"))
  '(eclim-executable "/home/elseorand/eclipses/eclipse4.5/eclim")
  '(eclimd-wait-for-process nil)
  '(package-selected-packages
-   (quote
-    (flyspell-correct flyspell-correct-helm tramp shackle meghanada flycheck-pos-tip company-lsp lsp-mode hiwin async-await helm-tramp dired-launch use-package undo-tree swiper projectile powershell org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
+   '(lsp-treemacs flyspell-correct flyspell-correct-helm tramp shackle meghanada flycheck-pos-tip company-lsp lsp-mode hiwin async-await helm-tramp dired-launch use-package undo-tree swiper projectile powershell org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
