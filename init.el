@@ -1564,6 +1564,14 @@ This can be used with the `org-open-at-point-functions' hook."
 ;; font
 (add-to-list 'default-frame-alist '(font . "ricty-12.0"))
 
+;; docker
+(require 'docker)
+(require 'dockerfile-mode)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+(require 'docker-compose-mode)
+(require 'docker-tramp-compat)
+(set-variable 'docker-tramp-use-names t)
+
 ;; emacsclientを使えるようにする
 (server-start)
 
@@ -1583,12 +1591,11 @@ This can be used with the `org-open-at-point-functions' hook."
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(display-time-mode t)
- '(eclim-eclipse-dirs (quote ("/home/elseorand/eclipses/eclipse4.5/")))
+ '(eclim-eclipse-dirs '("/home/elseorand/eclipses/eclipse4.5/"))
  '(eclim-executable "/home/elseorand/eclipses/eclipse4.5/eclim")
  '(eclimd-wait-for-process nil)
  '(package-selected-packages
-   (quote
-    (flyspell-correct flyspell-correct-helm tramp shackle meghanada flycheck-pos-tip company-lsp lsp-mode hiwin async-await helm-tramp dired-launch use-package undo-tree swiper projectile powershell org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php)))
+   '(docker docker-compose-mode docker-tramp dockerfile-mode lsp-docker flyspell-correct flyspell-correct-helm tramp shackle meghanada flycheck-pos-tip company-lsp lsp-mode hiwin async-await helm-tramp dired-launch use-package undo-tree swiper projectile powershell org magit json-mode js2-mode java-snippets japanese-holidays imenus ido-vertical-mode ido-occasional helm-google helm-descbinds helm-anything helm-ag flycheck expand-region exec-path-from-shell emmet-mode electric-operator el-get easy-kill dired+ company-irony clojure-mode clipmon annotate ace-isearch ac-php))
  '(rtags-use-helm t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
